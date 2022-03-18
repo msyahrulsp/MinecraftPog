@@ -9,7 +9,7 @@ class Item {
         string name;
         string type;
         string category;
-        const int id;
+        int id;
         static int numItems;
     public:
         Item(string name, string type, string category);
@@ -26,6 +26,7 @@ class Tool : public Item {
         Tool(string name, string type, string category, int durability);
         int getDurability() const;
         void setDurability(int durability);
+        Tool& operator=(const Tool&);
 };
 
 class NonTool : public Item {
@@ -35,6 +36,7 @@ class NonTool : public Item {
         NonTool(string name, string type, string category, int quantity);
         int getQuantity() const;
         void setQuantity(int quantity);
+        NonTool& operator=(const NonTool&);
 };
 
 #endif

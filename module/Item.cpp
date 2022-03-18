@@ -47,3 +47,23 @@ int NonTool::getQuantity() const {
 void NonTool::setQuantity(int quantity) {
     this->quantity = quantity;
 }
+
+Tool& Tool::operator=(const Tool& other) {
+    this->name = other.name;
+    this->type = other.type;
+    this->category = other.category;
+    this->id = other.id;
+    this->numItems = other.numItems;
+    this->durability = other.durability;
+    return *this;
+}
+
+NonTool& NonTool::operator=(const NonTool& other) {
+    this->name = other.name;
+    this->type = other.type;
+    this->category = other.category;
+    this->id = other.id;
+    this->numItems = other.numItems;
+    this->quantity = other.quantity;
+    return *this;
+}
