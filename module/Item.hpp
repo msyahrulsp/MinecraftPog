@@ -31,11 +31,13 @@ class Item {
 class Tool : public Item {
     private:
         int durability;
+        int quantity;
     public:
         Tool();
-        Tool(string name, string type, string category, int durability);
+        Tool(string name, string type, string category, int durability, int quantity);
         int getDurability() const;
         void setDurability(int durability);
+        int getQuantity() const;
         Tool& operator=(const Tool&);
 };
 

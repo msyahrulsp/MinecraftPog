@@ -51,8 +51,9 @@ Tool::Tool() : Item("", "", "TOOL") {
     this->durability = 0;
 }
 
-Tool::Tool(string name, string type, string category, int durability) : Item(name, type, "TOOL") {
+Tool::Tool(string name, string type, string category, int durability, int quantity) : Item(name, type, "TOOL") {
     this->durability = durability;
+    this->quantity = quantity;
 }
 
 int Tool::getDurability() const {
@@ -61,6 +62,10 @@ int Tool::getDurability() const {
 
 void Tool::setDurability(int durability) {
     this->durability = durability;
+}
+
+int Tool::getQuantity() const {
+    return this->quantity;
 }
 
 Tool& Tool::operator=(const Tool& other) {

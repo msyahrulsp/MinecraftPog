@@ -24,8 +24,14 @@ class Inventory {
             return this.slot[i];
         }
 
-        void setSlot(int id, T item) {
-            this.slot[id] = T;
+        void setSlot(T item) {
+            int i;
+            for (i = 0; i < SIZE; i++) {
+                if (this.slot[i] == EMPTY) {
+                    this.slot[i] = item;
+                    break;
+                }
+            }
         }
 
         bool isEmpty(int id) {
@@ -47,7 +53,7 @@ class Inventory {
 
         void display() {
             for (int i; i < SIZE; i++) {
-                cout << this.slot[i].name << "(" << this.slot[i].numItems << ")"
+                cout << this.slot[i].getName() << "(" << this.slot[i].getQuantity() << ")"
                 cout << "\t";
                 if ((i + 1) % 9 == 0) {
                     cout << endl;
