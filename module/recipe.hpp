@@ -1,16 +1,23 @@
+
 #include <string>
 #include <iostream>
-#include <crafting.hpp>
-#include <Item.hpp>
+#include "../module/crafting.hpp"
+#include "../module/Item.hpp"
 using namespace std;
 class recipe
 {
 private:
     int row,col;
-    string* items;
+    string* bahan;
+    Item hasil;
+    int jumlah;
 public:
-    recipe(int row, int col);
+    recipe(int r, int c);
+    recipe(int row, int col, Item i, int n);
     ~recipe();
     void setRecipe(int i, int j, string name);
-    int recipe::checkCrafting(Crafting<Item> c);
+    int checkCrafting(Crafting<Item> c);
+    void setItem(Item i);
+    Item getItem() const;
+    void setJumlah(int n);
 };

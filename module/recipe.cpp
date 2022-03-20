@@ -1,23 +1,30 @@
 
 #include <string>
 #include <iostream>
-#include <crafting.hpp>
-#include <Item.hpp>
-#include <recipe.hpp>
-recipe::recipe(int row, int col) : row(row), col(col)
+#include "../module/crafting.hpp"
+#include "../module/Item.hpp"
+#include "../module/recipe.hpp"
+Item NULL_ITEM = Item("-","-","-");
+recipe::recipe(int r, int c) : row(r), col(c), hasil(NULL_ITEM), jumlah(0){
+    this->bahan = new string[r*c];
+    for (int i = 0; i < r*c; i++){
+        this->bahan[i] = "-";
+    }
+};
+recipe::recipe(int row, int col, Item i, int n) : row(row), col(col), hasil(i), jumlah(n)
 {
-    this->items = new string[row*col];
+    this->bahan = new string[row*col];
     for (int i = 0; i < row*col; i++){
-        this->items[i] = "-";
+        this->bahan[i] = "-";
     }
 }
 
 recipe::~recipe()
 {
-    delete[] this->items;
+    delete[] this->bahan;
 }
 void recipe::setRecipe(int i, int j, string name){
-    this->items[i*this->col + j] = name;
+    this->bahan[i*this->col + j] = name;
 };
 
 int recipe::checkCrafting(Crafting<Item> c){
@@ -29,7 +36,7 @@ int recipe::checkCrafting(Crafting<Item> c){
             flag = true;
             for(int k = 0;  k < this->row; k++){
                 for (int l = 0; l < this->col; l++){
-                    if (c.getSlot(i * 3 + j).getName() != this->items[k*this->col + l]){
+                    if (c.getSlot(i * 3 + j).getName() != this->bahan[k*this->col + l]){
                         flag = false;
                         break;
                     } 
@@ -40,4 +47,13 @@ int recipe::checkCrafting(Crafting<Item> c){
         }
     }
     return flag;
+}
+void recipe::setItem(Item i){
+    this->hasil = i;
+};
+Item recipe::getItem() const{
+    return this->hasil;
+};
+void recipe::setJumlah(int n){
+    this->jumlah = n;
 }
