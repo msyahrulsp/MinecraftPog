@@ -6,11 +6,11 @@ EXECUTABLE_FILENAME = main
 ALL_SRCS := $(wildcard *.cpp)
 SRCS     := $(filter-out check.cpp, $(ALL_SRCS))
 
-all: compile test check
+all: compile test
 
 # Compile all cpp files except check.cpp
 compile:
-	g++ -std=c++17 -o $(EXECUTABLE_FILENAME) $(SRCS)
+	g++ -std=c++17 -o $(EXECUTABLE_FILENAME) $(SRCS) module/item.cpp module/recipe.cpp
 
 # Test
 test: $(TC_FOLDER)/*.$(EXT_IN) $(EXECUTABLE_FILENAME)

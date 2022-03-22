@@ -3,26 +3,77 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <sstream>
+#include "module/item.hpp"
+#include "module/recipe.hpp"
 
 using namespace std;
 
+bool isInt(string& str) {
+  for (char &c : str) {
+    if (isdigit(c) != 1) return false;
+  }
+  return true;
+}
+
+vector<string> split(string str, char delimiter = ' ') {
+  vector<string> res;
+  stringstream ss(str);
+  string temp;
+
+  while(getline(ss, temp, delimiter)) {
+    res.push_back(temp);
+  }
+
+  return res;
+}
+
 int main() {
+  vector<string> readItem;
+  ListItem listItem = ListItem();
+  ListRecipe *listRecipe = new ListRecipe();
+  Recipe *tempRecipe;
+  Item tempItem;
+  string tempId, tName, tType, tTool;
   string configPath = "./config";
   string itemConfigPath = configPath + "/item.txt";
 
-  // read item from config file
+  // Baca semua item dari item.txt
   ifstream itemConfigFile(itemConfigPath);
   for (string line; getline(itemConfigFile, line);) {
-    cout << line << endl;
-    // do something
+    readItem = split(line);
+    tempItem = Item(readItem[0], readItem[1], readItem[2], readItem[3]);
+    listItem << tempItem;
   }
+  listItem.printInfo();
 
   // read recipes
-  for (const auto &entry :
-       filesystem::directory_iterator(configPath + "/recipe")) {
-    cout << entry.path() << endl;
-    // read from file and do something
+  for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
+    ifstream recipeConfigFile(entry.path());
+    string line;
+    int idx = 0;
+
+    getline(recipeConfigFile, line);
+    tempRecipe = new Recipe((int)line[0]-48, (int)line[2]-48);
+    string *tempMat = new string[tempRecipe->getN()];
+
+    for (int i = 0; i < tempRecipe->getRow(); i++) {
+      getline(recipeConfigFile, line);
+      readItem = split(line);
+      for (int j = 0; j < readItem.size(); j++) {
+        tempRecipe->setMaterial(idx, readItem[j]);
+        idx++;
+      }
+    }
+
+    getline(recipeConfigFile, line);
+    readItem = split(line);
+    tempRecipe->setOutput(readItem[0], stoi(readItem[1]));
+    
+    listRecipe->addRecipe(*tempRecipe);
   }
+  listRecipe->printInfo();
 
   // sample interaction
   string command;
@@ -32,6 +83,7 @@ int main() {
       cin >> outputPath;
       ofstream outputFile(outputPath);
 
+      // TODO > ItemID:ItemQty
       // hardcode for first test case
       outputFile << "21:10" << endl;
       outputFile << "6:1" << endl;
@@ -53,6 +105,11 @@ int main() {
       string slotDest;
       // need to handle multiple destinations
       cin >> slotSrc >> slotQty >> slotDest;
+
+      char srcType = slotSrc[0];
+      char destType = slotDest[0];
+      int srcDest = slotSrc[1];
+      int destDest = slotDest[1];
       cout << "TODO" << endl;
     } else {
       // todo
