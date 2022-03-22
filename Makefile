@@ -3,15 +3,15 @@ EXT_IN = in
 EXT_OUT = out
 EXT_ANS = ans
 EXECUTABLE_FILENAME = main
-ALL_SRCS := $(wildcard *.cpp)
+ALL_SRCS := $(wildcard *.cpp) $(wildcard module/*.cpp)
 SRCS     := $(filter-out check.cpp, $(ALL_SRCS))
 
 all: compile test
 
 # Compile all cpp files except check.cpp
 compile:
-	g++ -std=c++17 -o $(EXECUTABLE_FILENAME) $(SRCS) module/item.cpp module/recipe.cpp module/inventory.cpp module/tool.cpp
-
+	g++ -std=c++17 -o $(EXECUTABLE_FILENAME) $(SRCS) 
+	
 # Test
 test: $(TC_FOLDER)/*.$(EXT_IN) $(EXECUTABLE_FILENAME)
 	for inputfile in $(TC_FOLDER)/*.$(EXT_IN); do \

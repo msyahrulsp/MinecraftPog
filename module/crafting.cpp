@@ -1,1 +1,0 @@
-// pindah kesini nanti

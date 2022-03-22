@@ -7,7 +7,7 @@
 #include <sstream>
 #include "module/item.hpp"
 #include "module/recipe.hpp"
-#include "module/inventory.hpp"
+#include "module/menu.hpp"
 
 using namespace std;
 
@@ -27,6 +27,7 @@ int main() {
   vector<string> readItem;
   ListItem listItem = ListItem();
   Inventory invent = Inventory();
+  Crafting craft = Crafting();
   ListRecipe *listRecipe = new ListRecipe();
   Recipe *tempRecipe;
   Item *tempItem;
@@ -72,22 +73,15 @@ int main() {
     listRecipe->addRecipe(*tempRecipe);
   };
 
-  // sample interaction
   string command;
   while (cin >> command) {
     if (command == "EXPORT") {
       string outputPath;
       cin >> outputPath;
       ofstream outputFile(outputPath);
-
-      // TODO > ItemID:ItemQty
-      // hardcode for first test case
-      outputFile << "21:10" << endl;
-      outputFile << "6:1" << endl;
-      for (int i = 2; i < 27; i++) {
-        outputFile << "0:0" << endl;
+      for (int i = 0; i < SIZEI; i++) {
+        outputFile << invent.getSlot(i)->getId() << ":" << invent.getSlot(i)->getSide() << endl;
       }
-
       cout << "Exported" << endl;
     } else if (command == "CRAFT") {
       cout << "TODO" << endl;
@@ -108,6 +102,13 @@ int main() {
       int srcDest = slotSrc[1];
       int destDest = slotDest[1];
       cout << "TODO" << endl;
+    } else if (command == "SHOW") {
+      craft.display();
+      invent.display();
+    } else if (command == "DISCARD") {
+
+    } else if (command == "USE") {
+
     } else {
       // todo
       cout << "Invalid command" << endl;
