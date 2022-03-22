@@ -10,7 +10,7 @@ Recipe::Recipe() {
 
     for (int i = 0; i < this->getN(); i++) {
         this->items[i] = "-";
-    }
+}
 
     this->output = "-";
     this->nOutput = 0;
