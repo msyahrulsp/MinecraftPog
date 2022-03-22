@@ -2,6 +2,7 @@
 #define _INVENTORY_HPP_
 
 #include "item.hpp"
+#include "tool.hpp"
 
 #define SIZE 27
 #define EMPTY ""
@@ -22,7 +23,6 @@ class Inventory {
         void setSlot(Item item);
 
         bool isEmpty(int id);
-
         // ambil idx item di array
         // perlu handling item tool atau non tool
         // contoh: 48 item ke item yang punya 59

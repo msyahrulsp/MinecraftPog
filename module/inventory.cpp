@@ -2,6 +2,10 @@
 
 Inventory::Inventory() {
     this->slot = new Item[SIZE];
+
+    for (int i = 0; i < SIZE; i++) {
+        this->slot[i] = NonTool("0", "", "", "", 0);
+    }
 }
 
 Inventory::~Inventory() {
@@ -16,6 +20,13 @@ bool Inventory::isEmpty(int idx) {
     return this->slot[idx].getName() == EMPTY;
 }
 
-void display() {
-    
+void Inventory::display() {
+    for (int i = 0; i < SIZE; i++) {
+        cout << this->slot[i].getId() << ":" << this->slot[i].getSide();
+        if ((i + 1) % 9 != 0) {
+            cout << "\t";
+        } else {
+            cout << endl;
+        }
+    }
 }

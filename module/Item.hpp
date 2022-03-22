@@ -25,7 +25,7 @@ class Item {
         void setCategory(string category);
         void setId(int id);
         
-        // virtual int getDurability() const;
+        virtual int getSide() = 0;
         // virtual void setDurability(int durability);
         // virtual int getQuantity() const;
         // virtual void setQuantity(int quantity);

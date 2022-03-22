@@ -7,6 +7,7 @@
 #include <sstream>
 #include "module/item.hpp"
 #include "module/recipe.hpp"
+#include "module/inventory.hpp"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ vector<string> split(string str, char delimiter = ' ') {
 int main() {
   vector<string> readItem;
   ListItem listItem = ListItem();
+  Inventory invent = Inventory();
   ListRecipe *listRecipe = new ListRecipe();
   Recipe *tempRecipe;
   Item tempItem;
@@ -39,7 +41,6 @@ int main() {
     tempItem = Item(readItem[0], readItem[1], readItem[2], readItem[3]);
     listItem << tempItem;
   }
-  listItem.printInfo();
 
   // read recipes
   for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
@@ -65,8 +66,9 @@ int main() {
     tempRecipe->setOutput(readItem[0], stoi(readItem[1]));
     
     listRecipe->addRecipe(*tempRecipe);
-  }
-  listRecipe->printInfo();
+  };
+
+  invent.display();
 
   // sample interaction
   string command;

@@ -129,14 +129,3 @@ void ListRecipe::printInfo() {
 void ListRecipe::addRecipe(Recipe &recipe) {
     this->recipes[this->neff++] = recipe;
 }
-
-void operator<<(ListRecipe& listRecipe, Recipe recipe) {
-    int idx = listRecipe.neff;
-    listRecipe.recipes[idx].setRowCol(recipe.getRow(), recipe.getCol());
-    
-    for (int i = 0; i < recipe.getN(); i++) {
-        listRecipe.recipes[idx].setItems(i, recipe.getItems(i));
-    }
-
-    listRecipe.recipes[idx].setOutput(recipe.getOutput(), recipe.getNOutput());
-}
