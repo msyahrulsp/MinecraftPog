@@ -9,8 +9,7 @@ class Tool : public Item {
         Tool& operator=(const Tool&);
         
         int getSide() override;
-        
-        void setDurability(int durability);
+        void setSide(int durability) override;
 };
 
 class NonTool : public Item {
@@ -22,5 +21,5 @@ class NonTool : public Item {
         NonTool& operator=(const NonTool&);
         
         int getSide() override;
-        void setQuantity(int quantity);
+        void setSide(int quantity) override;
 };

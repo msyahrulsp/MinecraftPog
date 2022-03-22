@@ -67,6 +67,29 @@ void ListItem::printInfo() {
     }
 }
 
+string ListItem::getId(int idx) {
+    return this->items[idx]->getId();
+}
+
+string ListItem::getName(int idx) {
+    return this->items[idx]->getName();
+}
+
+string ListItem::getType(int idx) {
+    return this->items[idx]->getType();
+}
+
+string ListItem::getCat(int idx) {
+    return this->items[idx]->getCategory();
+}
+
+int ListItem::findItem(string name) {
+    for (int i = 1; i < this->neff; i++) {
+        if (this->items[i]->getName() == name) return i;
+    }
+    return -1;
+}
+
 void operator<<(ListItem& listItem, Item &item) {
     listItem.items[listItem.neff++] = &item;
 }

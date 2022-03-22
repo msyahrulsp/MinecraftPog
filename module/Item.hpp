@@ -26,6 +26,7 @@ class Item {
         void setId(int id);
         
         virtual int getSide() = 0;
+        virtual void setSide(int num) = 0;
         // virtual void setDurability(int durability);
         // virtual int getQuantity() const;
         // virtual void setQuantity(int quantity);
@@ -41,6 +42,12 @@ class ListItem {
         ~ListItem();
 
         void printInfo();
+
+        string getId(int idx);
+        string getName(int idx);
+        string getType(int idx);
+        string getCat(int idx);
+        int findItem(string name);
 
         friend void operator<<(ListItem& listItem, Item &item);
 };

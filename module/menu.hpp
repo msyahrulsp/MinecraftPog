@@ -6,7 +6,6 @@
 
 #define SIZEI 27
 #define SIZEC 9
-#define EMPTY ""
 
 using namespace std;
 
@@ -18,11 +17,12 @@ class Menu {
         Menu(int size);
         ~Menu();
 
-        void giveItem(Item* item);
+        void addItem(Item* item);
 
         Item* getSlot(int idx);
 
         bool isEmpty(int idx);
+        bool haveItem(string name);
 
         void display();
 };

@@ -12,7 +12,7 @@ int Tool::getSide() {
     return this->durability;
 }
 
-void Tool::setDurability(int durability) {
+void Tool::setSide(int durability) {
     this->durability = durability;
 }
 
@@ -38,7 +38,7 @@ int NonTool::getSide() {
     return this->quantity;
 }
 
-void NonTool::setQuantity(int quantity) {
+void NonTool::setSide(int quantity) {
     this->quantity = quantity;
 }
 

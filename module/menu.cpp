@@ -13,9 +13,39 @@ Menu::~Menu() {
     delete[] this->slot;
 }
 
-void giveItem(Item* item) {
-    // search list item
-    // copy item aja??   
+void Menu::addItem(Item* item) {
+    for (int i = 0; i < this->size; i++) {
+        int dn = this->slot[i]->getSide();
+        int dn2 = item->getSide();
+        string name = this->slot[i]->getName();
+        if (this->slot[i]->getType() == "NONTOOL") {
+            // Ada item nontool yang bisa distack
+            if (haveItem(name)) {
+                if (name == item->getName()) {
+                    if (dn + dn2 <= 64) {
+                        this->slot[i]->setSide(dn + dn2);
+                        break;
+                    } else {
+                        this->slot[i]->setSide(64);
+                        item->setSide(dn2 - (64 - dn));
+                        // rekursif dari awal loop
+                        this->addItem(item);
+                    } 
+                }
+            } else {
+                if (isEmpty(i)) {
+                    this->slot[i] = item;
+                    break;
+                }
+            }
+        } else {
+            if (isEmpty(i)) {
+                this->slot[i] = item;
+                break;
+            }
+        }
+    }  
+    cout << "Inventory penuh!" << endl;
 }
 
 Item* Menu::getSlot(int idx) {
@@ -23,7 +53,16 @@ Item* Menu::getSlot(int idx) {
 }
 
 bool Menu::isEmpty(int idx) {
-    return this->slot[idx]->getName() == EMPTY;
+    return this->slot[idx]->getId() == "0";
+}
+
+bool Menu::haveItem(string name) {
+    for (int i = 0; i < this->size; i++) {
+        int dn = this->slot[i]->getSide();
+        string tName = this->slot[i]->getName();
+        if (tName == name && dn < 64) return true;
+    }
+    return false;
 }
 
 void Menu::display() {

@@ -89,13 +89,29 @@ int main() {
       string itemName;
       int itemQty;
       cin >> itemName >> itemQty;
-      cout << "TODO" << endl;
+
+      int itemIdx = listItem.findItem(itemName);
+      if (itemIdx != -1) {
+        tempId = listItem.getId(itemIdx);
+        tName = listItem.getName(itemIdx);
+        tType = listItem.getType(itemIdx);
+        tTool = listItem.getCat(itemIdx);
+        if (tTool == "TOOL") {
+          tempItem = new Tool(tempId, tName, tType, tTool, 10);
+        } else {
+          tempItem = new NonTool(tempId, tName, tType, tTool, itemQty);
+        }
+      }
+
+      invent.addItem(tempItem);
     } else if (command == "MOVE") {
       string slotSrc;
       int slotQty;
       string slotDest;
-      // need to handle multiple destinations
+      
       cin >> slotSrc >> slotQty >> slotDest;
+
+      // bisa ada n tujuan
 
       char srcType = slotSrc[0];
       char destType = slotDest[0];
@@ -106,9 +122,10 @@ int main() {
       craft.display();
       invent.display();
     } else if (command == "DISCARD") {
-
+      // Non Tool tinggal kurang
+      // Tool hapus?
     } else if (command == "USE") {
-
+      // Kurang dura tool
     } else {
       // todo
       cout << "Invalid command" << endl;
