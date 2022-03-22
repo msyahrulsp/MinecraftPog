@@ -10,13 +10,6 @@
 
 using namespace std;
 
-bool isInt(string& str) {
-  for (char &c : str) {
-    if (isdigit(c) != 1) return false;
-  }
-  return true;
-}
-
 vector<string> split(string str, char delimiter = ' ') {
   vector<string> res;
   stringstream ss(str);

@@ -46,65 +46,6 @@ void Item::setId(int id) {
     this->id = id;
 }
 
-// Tool::Tool() : Item("", "", "TOOL") {
-//     this->durability = 0;
-// }
-
-// Tool::Tool(string name, string type, string category, int durability, int quantity) : Item(name, type, "TOOL") {
-//     this->durability = durability;
-//     this->quantity = quantity;
-// }
-
-// int Tool::getDurability() const {
-//     return this->durability;
-// }
-
-// void Tool::setDurability(int durability) {
-//     this->durability = durability;
-// }
-
-// int Tool::getQuantity() const {
-//     return this->quantity;
-// }
-
-// Tool& Tool::operator=(const Tool& other) {
-//     this->id = other.id;
-//     this->name = other.name;
-//     this->type = other.type;
-//     this->category = other.category;
-//     this->id = other.id;
-//     this->numItems = other.numItems;
-//     this->durability = other.durability;
-//     return *this;
-// }
-
-// NonTool::NonTool() : Item("", "", "NONTOOL") {
-//     this->quantity = 0;
-// }
-
-// NonTool::NonTool(string name, string type, string category, int quantity) : Item(name, type, "NONTOOL") {
-//     this->quantity = quantity;
-// }
-
-// int NonTool::getQuantity() const {
-//     return this->quantity;
-// }
-
-// void NonTool::setQuantity(int quantity) {
-//     this->quantity = quantity;
-// }
-
-// NonTool& NonTool::operator=(const NonTool& other) {
-//     this->id = other.id;
-//     this->name = other.name;
-//     this->type = other.type;
-//     this->category = other.category;
-//     this->id = other.id;
-//     this->numItems = other.numItems;
-//     this->quantity = other.quantity;
-//     return *this;
-// }
-
 ListItem::ListItem() {
     this->size = 100;
     this->neff = 0;

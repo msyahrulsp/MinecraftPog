@@ -1,67 +1,35 @@
 #ifndef _INVENTORY_HPP_
 #define _INVENTORY_HPP_
 
+#include "item.hpp"
+
 #define SIZE 27
-#define EMPTY NULL
+#define EMPTY ""
 
 using namespace std;
 
 // apa include item aja
-template <class T>
 class Inventory {
     private:
         // invent id?? di spek I0, I1, .., IN. cukup idx aja?
-        T *slot[SIZE];
+        Item *slot;
     public:
-        Inventory() {
-            this->slot = new T[SIZE];
-            for (int i = 0; i < SIZE; i++) {
-                this.slot[i] = EMPTY;
-            }
-        }
+        Inventory();
+        ~Inventory();
 
-        T getSlot(int id) {
-            return this.slot[i];
-        }
+        Item getSlot(int idx);
 
-        void setSlot(T item) {
-            int i;
-            for (i = 0; i < SIZE; i++) {
-                if (this.slot[i] == EMPTY) {
-                    this.slot[i] = item;
-                    break;
-                }
-            }
-        }
+        void setSlot(Item item);
 
-        bool isEmpty(int id) {
-            return this.slot[id] == EMPTY; 
-        }
+        bool isEmpty(int id);
 
         // ambil idx item di array
         // perlu handling item tool atau non tool
         // contoh: 48 item ke item yang punya 59
         // jadinya 64 43, 43 cari slot baru
-        int isExist(T item, bool aStack) {
-            for (int i = 0; i < SIZE; i++) {
-                if (this.slot[i] == item) {  // ?? 
-                    return i;
-                }
-            }
-            return -1;
-        }
+        int isExist(Item item);
 
-        void display() {
-            for (int i; i < SIZE; i++) {
-                cout << this.slot[i].getName() << "(" << this.slot[i].getQuantity() << ")"
-                cout << "\t";
-                if ((i + 1) % 9 == 0) {
-                    cout << endl;
-                }
-            }
-        }
-
-        // TODO > Pindah2 stack kudu di invent??
+        void display();
 };
 
 #endif
