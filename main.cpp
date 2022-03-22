@@ -29,7 +29,7 @@ int main() {
   Inventory invent = Inventory();
   ListRecipe *listRecipe = new ListRecipe();
   Recipe *tempRecipe;
-  Item tempItem;
+  Item *tempItem;
   string tempId, tName, tType, tTool;
   string configPath = "./config";
   string itemConfigPath = configPath + "/item.txt";
@@ -38,8 +38,12 @@ int main() {
   ifstream itemConfigFile(itemConfigPath);
   for (string line; getline(itemConfigFile, line);) {
     readItem = split(line);
-    tempItem = Item(readItem[0], readItem[1], readItem[2], readItem[3]);
-    listItem << tempItem;
+    if (readItem[3] == "TOOL") {
+      tempItem = new Tool(readItem[0], readItem[1], readItem[2], readItem[3], 0);
+    } else {
+      tempItem = new NonTool(readItem[0], readItem[1], readItem[2], readItem[3], 0);
+    }
+    listItem << *tempItem;
   }
 
   // read recipes
@@ -67,8 +71,6 @@ int main() {
     
     listRecipe->addRecipe(*tempRecipe);
   };
-
-  invent.display();
 
   // sample interaction
   string command;

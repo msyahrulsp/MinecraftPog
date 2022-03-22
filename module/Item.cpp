@@ -49,7 +49,7 @@ void Item::setId(int id) {
 ListItem::ListItem() {
     this->size = 100;
     this->neff = 0;
-    this->items = new Item[this->size];
+    this->items = new Item*[this->size];
 }
 
 ListItem::~ListItem() {
@@ -59,14 +59,14 @@ ListItem::~ListItem() {
 void ListItem::printInfo() {
     for (int i = 0; i < this->neff; i++) {
         cout << "Tool ke " << i+1 << endl;
-        cout << this->items[i].getId() << " ";
-        cout << this->items[i].getName() << " ";
-        cout << this->items[i].getType() << " ";
-        cout << this->items[i].getCategory();
+        cout << this->items[i]->getId() << " ";
+        cout << this->items[i]->getName() << " ";
+        cout << this->items[i]->getType() << " ";
+        cout << this->items[i]->getCategory();
         cout << endl;
     }
 }
 
-void operator<<(ListItem& listItem, Item item) {
-    listItem.items[listItem.neff++] = item;
+void operator<<(ListItem& listItem, Item &item) {
+    listItem.items[listItem.neff++] = &item;
 }

@@ -33,7 +33,7 @@ class Item {
 
 class ListItem {
     private:
-        Item* items;
+        Item** items;
         int size;
         int neff;
     public:
@@ -42,7 +42,7 @@ class ListItem {
 
         void printInfo();
 
-        friend void operator<<(ListItem& listItem, Item item);
+        friend void operator<<(ListItem& listItem, Item &item);
 };
 
 #endif

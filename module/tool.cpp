@@ -8,7 +8,7 @@ Tool::Tool(string id, string name, string type, string category, int durability)
     this->durability = durability;
 }
 
-int Tool::getSide() const {
+int Tool::getSide() {
     return this->durability;
 }
 
@@ -34,7 +34,7 @@ NonTool::NonTool(string id, string name, string type, string category, int quant
     this->quantity = quantity;
 }
 
-int NonTool::getSide() const {
+int NonTool::getSide() {
     return this->quantity;
 }
 
