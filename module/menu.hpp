@@ -10,36 +10,31 @@
 
 using namespace std;
 
-class Inventory {
+class Menu {
     private:
+        int size;
         Item **slot;
     public:
-        Inventory();
-        ~Inventory();
+        Menu(int size);
+        ~Menu();
+
+        void giveItem(Item* item);
 
         Item* getSlot(int idx);
-
-        // void setSlot(Item item);
 
         bool isEmpty(int idx);
 
         void display();
 };
 
-class Crafting {
-    private:
-        Item **slot;
+class Inventory : public Menu {
+    public:
+        Inventory();
+};
+
+class Crafting : public Menu {
     public:
         Crafting();
-        ~Crafting();
-
-        Item* getSlot(int idx);
-
-        // void setSlot(Item item);
-
-        bool isEmpty(int idx);
-
-        void display();
 };
 
 #endif

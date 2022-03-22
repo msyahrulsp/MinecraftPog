@@ -1,29 +1,36 @@
 #include "menu.hpp"
 
-Inventory::Inventory() {
-    this->slot = new Item*[SIZEI];
+Menu::Menu(int size) {
+    this->size = size;
+    this->slot = new Item*[size];
 
-    for (int i = 0; i < SIZEI; i++) {
+    for (int i = 0; i < size; i++) {
         this->slot[i] = new NonTool("0", "", "", "", 0);
     }
 }
 
-Inventory::~Inventory() {
+Menu::~Menu() {
     delete[] this->slot;
 }
 
-Item* Inventory::getSlot(int idx) {
+void giveItem(Item* item) {
+    // search list item
+    // copy item aja??   
+}
+
+Item* Menu::getSlot(int idx) {
     return this->slot[idx];
 }
 
-bool Inventory::isEmpty(int idx) {
+bool Menu::isEmpty(int idx) {
     return this->slot[idx]->getName() == EMPTY;
 }
 
-void Inventory::display() {
-    for (int i = 0; i < SIZEI; i++) {
+void Menu::display() {
+    for (int i = 0; i < this->size; i++) {
+        if (this->size == 9 && (i + 1) % (this->size / 3) == 1) cout << "\t\t\t";
         cout << this->slot[i]->getId() << ":" << this->slot[i]->getSide();
-        if ((i + 1) % 9 != 0) {
+        if ((i + 1) % (this->size / 3) != 0) {
             cout << "\t";
         } else {
             cout << endl;
@@ -31,34 +38,10 @@ void Inventory::display() {
     }
 }
 
-Crafting::Crafting() {
-    this->slot = new Item*[SIZEC];
-
-    for (int i = 0; i < SIZEC; i++) {
-        this->slot[i] = new NonTool("0", "", "", "", 0);
-    }
+Inventory::Inventory() : Menu(SIZEI) {
+    
 }
 
-Crafting::~Crafting() {
-    delete[] this->slot;
-}
-
-Item* Crafting::getSlot(int idx) {
-    return this->slot[idx];
-}
-
-bool Crafting::isEmpty(int idx) {
-    return this->slot[idx]->getName() == EMPTY;
-}
-
-void Crafting::display() {
-    for (int i = 0; i < SIZEC; i++) {
-        if ((i + 1) % 3 == 1) cout << "\t\t\t";
-        cout << this->slot[i]->getId() << ":" << this->slot[i]->getSide();
-        if ((i + 1) % 3 != 0) {
-            cout << "\t";
-        } else {
-            cout << endl;
-        }
-    }
+Crafting::Crafting() : Menu(SIZEC) {
+    
 }
