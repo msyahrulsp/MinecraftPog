@@ -6,6 +6,7 @@
 
 #define SIZEI 27
 #define SIZEC 9
+#define AIR new NonTool("0", "", "", "", 0)
 
 using namespace std;
 
@@ -18,6 +19,8 @@ class Menu {
         ~Menu();
 
         void addItem(Item* item);
+        void discard(int idx, int qty);
+        void use(int idx);
 
         Item* getSlot(int idx);
 

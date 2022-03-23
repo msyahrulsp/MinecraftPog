@@ -96,14 +96,17 @@ int main() {
         tName = listItem.getName(itemIdx);
         tType = listItem.getType(itemIdx);
         tTool = listItem.getCat(itemIdx);
+
         if (tTool == "TOOL") {
           tempItem = new Tool(tempId, tName, tType, tTool, 10);
         } else {
           tempItem = new NonTool(tempId, tName, tType, tTool, itemQty);
         }
-      }
 
-      invent.addItem(tempItem);
+        invent.addItem(tempItem);
+      } else {
+        cout << "Item tidak terdaftar" << endl;
+      }
     } else if (command == "MOVE") {
       string slotSrc;
       int slotQty;
@@ -122,12 +125,51 @@ int main() {
       craft.display();
       invent.display();
     } else if (command == "DISCARD") {
-      // Non Tool tinggal kurang
-      // Tool hapus?
+      string slotSrc;
+      int slotQty;
+      
+      cin >> slotSrc >> slotQty;
+      char srcType = slotSrc[0];
+      int destType = (int)slotSrc[1]-48;
+
+      if (srcType == 'I') {
+        if (destType >= 0 && destType < 36) {
+          invent.discard(destType, slotQty);
+        } else {
+          cout << "Index tujuan invalid" << endl;
+        }
+      } else if (srcType == 'C') {
+        if (destType >= 0 && destType < 9) {
+          craft.discard(destType, slotQty);
+        } else {
+          cout << "Index tujuan invalid" << endl;
+        }
+      } else {
+        cout << "Tujuan invalid" << endl;
+      }
     } else if (command == "USE") {
-      // Kurang dura tool
+      string slotSrc;
+
+      cin >> slotSrc;
+      char srcType = slotSrc[0];
+      int destType = (int)slotSrc[1]-48;
+
+      if (srcType == 'I') {
+        if (destType >= 0 && destType < 36) {
+          invent.use(destType);
+        } else {
+          cout << "Index tujuan invalid" << endl;
+        }
+      } else if (srcType == 'C') {
+        if (destType >= 0 && destType < 9) {
+          craft.use(destType);
+        } else {
+          cout << "Index tujuan invalid" << endl;
+        }
+      } else {
+        cout << "Tujuan invalid" << endl;
+      }
     } else {
-      // todo
       cout << "Invalid command" << endl;
     }
   }
