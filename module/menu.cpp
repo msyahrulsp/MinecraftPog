@@ -19,7 +19,6 @@ void Menu::addItem(Item* item) {
         int dn = this->slot[i]->getSide();
         int dn2 = item->getSide();
         string name = this->slot[i]->getName();
-        cout << name << item->getName() << endl;
         if (this->slot[i]->getCategory() == "NONTOOL") {
             // Ada item nontool yang bisa distack
             if (haveItem(item->getName())) {
