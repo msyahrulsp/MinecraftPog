@@ -21,7 +21,6 @@ Tool& Tool::operator=(const Tool& other) {
     this->name = other.name;
     this->type = other.type;
     this->category = other.category;
-    this->id = other.id;
     this->durability = other.durability;
     return *this;
 }
@@ -47,7 +46,6 @@ NonTool& NonTool::operator=(const NonTool& other) {
     this->name = other.name;
     this->type = other.type;
     this->category = other.category;
-    this->id = other.id;
     this->quantity = other.quantity;
     return *this;
 }

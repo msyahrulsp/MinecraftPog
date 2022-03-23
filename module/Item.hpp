@@ -27,9 +27,6 @@ class Item {
         
         virtual int getSide() = 0;
         virtual void setSide(int num) = 0;
-        // virtual void setDurability(int durability);
-        // virtual int getQuantity() const;
-        // virtual void setQuantity(int quantity);
 };
 
 class ListItem {

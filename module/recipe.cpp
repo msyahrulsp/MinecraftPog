@@ -109,7 +109,7 @@ void Recipe::setOutput(string output, int nOutput) {
 
 ListRecipe::ListRecipe() {
     this->size = 100;
-    this->neff = 1;
+    this->neff = 0;
     this->recipes = new Recipe[this->size];
 }
 
@@ -118,9 +118,7 @@ ListRecipe::~ListRecipe() {
 }
 
 void ListRecipe::printInfo() {
-    // Kenapa 1?? i don't even know at this point
-    // Kalau include 1 bakal output "-:0"
-    for (int i = 1; i < this->neff; i++) {
+    for (int i = 0; i < this->neff; i++) {
         recipes[i].printItems();
         cout << endl;
     }

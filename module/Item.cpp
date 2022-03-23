@@ -1,4 +1,4 @@
-#include "Item.hpp"
+#include "item.hpp"
 
 Item::Item() {
     this->id = "";
@@ -84,7 +84,7 @@ string ListItem::getCat(int idx) {
 }
 
 int ListItem::findItem(string name) {
-    for (int i = 1; i < this->neff; i++) {
+    for (int i = 0; i < this->neff; i++) {
         if (this->items[i]->getName() == name) return i;
     }
     return -1;
