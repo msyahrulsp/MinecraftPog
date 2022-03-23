@@ -44,8 +44,16 @@ void Menu::addItem(Item* item) {
                 return;
             }
         }
-    }  
-    cout << "Inventory penuh!" << endl;
+    }
+    cout << "Inventory penuh! ";
+
+    if (item->getCategory() == "NONTOOL" && item->getSide() > 0) {
+        cout << item->getSide() << " " << item->getName() << " jatuh ke tanah!" << endl;
+    }
+
+    if (item->getCategory() == "TOOL") {
+        cout << item->getName() << " jatuh ke tanah!" << endl;
+    }
 }
 
 void Menu::discard(int idx, int qty) {
@@ -82,6 +90,15 @@ Item* Menu::getSlot(int idx) {
     return this->slot[idx];
 }
 
+int Menu::findTool() {
+    for (int i = 0; i < this->size; i++) {
+        if (this->slot[i]->getCategory() == "TOOL") {
+            return i;
+        }
+    }
+    return -1;
+}
+
 bool Menu::isEmpty(int idx) {
     return this->slot[idx]->getId() == "0";
 }
@@ -115,18 +132,77 @@ Crafting::Crafting() : Menu(SIZEC) {
     
 }
 
-void Crafting::craft(ListRecipe* listRecipe) {
+int Crafting::toolCount() {
+    int idx = this->findTool();
+    string name = this->slot[idx]->getName();
+    if (idx != -1) {
+        int res = 1;
+        for (int i = idx+1; i < this->size; i++) {
+            if (this->slot[i]->getName() == name) res++;
+        }
+        return res;
+    }
+    return 0;
+}
+
+int Crafting::nonToolCount() {
+    int count = 0;
+    for (int i = 0; i < this->size; i++) {
+        if (this->slot[i]->getCategory() == "NONTOOL") count++;
+    }
+    return count;
+}
+
+bool Crafting::validCombine() {
+    int tc = this->toolCount();
+    int ntc = this->nonToolCount();
+
+    return (tc == 2 && ntc == 0);
+}
+
+void Crafting::erase() {
+    for (int i = 0; i < this->size; i++) {
+        if (this->slot[i]->getCategory() == "NONTOOL") {
+            int n = this->slot[i]->getSide();
+            this->slot[i]->setSide(n - 1);
+            if (n - 1 == 0) this->slot[i] = AIR;
+        } else {
+            this->slot[i] = AIR;
+        }
+    }
+}
+
+void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
+    if (this->validCombine()) {
+        string id, name;
+        int dura = 0;
+        for (int i = 0; i < this->size; i++) {
+            if (this->slot[i]->getId() != "0") {
+                id = this->slot[i]->getId();
+                name = this->slot[i]->getName();
+                dura += this->slot[i]->getSide();
+            }
+        }
+        if (dura > 10) dura = 10;
+        Item* tempItem = new Tool(id, name, "-", "TOOL", dura);
+        invent->addItem(tempItem);
+        this->erase();
+        return;
+    }
+
     for (int i = 0; i < listRecipe->getNeff(); i++) {
         Recipe* curRecipe = listRecipe->getRecipe(i);
         if (checkRecipe(curRecipe)) {
-            this->addItem(curRecipe->getOutput());
+            invent->addItem(curRecipe->getOutput());
+            this->erase();
+            if (full) this->craft(listRecipe, invent, true);
             return;
         }
     }
-    cout << "Tidak ada recipe yang sesuai" << endl;
 }
 
 bool Crafting::checkRecipe(Recipe* recipe) {
+    // Brute Force Pog
     for (int i = 0; i < this->size; i++) {
         // TODO
     }

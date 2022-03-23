@@ -104,13 +104,12 @@ int main() {
       string craftType;
       cin >> craftType;
 
-      if (craftType == "PARTIAL") {
-
+      if (craftType == "ONCE") {
+        craft.craft(listRecipe, &invent, false);
       } else if (craftType == "FULL") {
-
+        craft.craft(listRecipe, &invent, true);
       } else {
         cout << "Invalid craft type" << endl;
-        craft.craft(listRecipe);
       }
     } else if (command == "GIVE") {
       string itemName;

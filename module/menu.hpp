@@ -25,6 +25,7 @@ class Menu {
         void use(int idx);
 
         Item* getSlot(int idx);
+        int findTool();
 
         bool isEmpty(int idx);
         bool haveItem(string name);
@@ -41,7 +42,12 @@ class Crafting : public Menu {
     public:
         Crafting();
 
-        void craft(ListRecipe* listRecipe);
+        int toolCount();
+        int nonToolCount();
+
+        bool validCombine();
+        void erase();
+        void craft(ListRecipe* listRecipe, Inventory* invent, bool full);
         bool checkRecipe(Recipe* recipe);
 };
 
