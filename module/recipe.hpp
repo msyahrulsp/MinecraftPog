@@ -1,21 +1,26 @@
 
 #include <string>
 #include <iostream>
+#pragma once
+
+#include "item.hpp"
+#include "tool.hpp"
+
 using namespace std;
+
 class Recipe {
     private:
         int row;
         int col;
         string* items;
-        string output;
-        int nOutput;
+        Item* output;
     public:
         Recipe();
         Recipe(int row, int col);
         ~Recipe();
 
         int getNOutput();
-        string getOutput();
+        Item* getOutput();
         int getRow();
         int getCol();
         int getN();
@@ -25,7 +30,7 @@ class Recipe {
         void setItems(int idx, string item);
         void setRowCol(int row, int col);
         void setMaterial(int idx, string name);
-        void setOutput(string output, int nOutput);
+        void setOutput(Item* output);
 };
 
 class ListRecipe {
@@ -37,8 +42,10 @@ class ListRecipe {
         ListRecipe();
         ~ListRecipe();
 
-        void printInfo();
+        Recipe* getRecipe(int idx);
+        int getNeff();
 
+        void printInfo();
         void addRecipe(Recipe &recipe);
 
         friend void operator<<(ListRecipe& listRecipe, Recipe recipe);

@@ -1,8 +1,10 @@
 #ifndef _MENU_HPP_
 #define _MENU_HPP_
+#pragma once
 
 #include "item.hpp"
 #include "tool.hpp"
+#include "recipe.hpp"
 
 #define SIZEI 27
 #define SIZEC 9
@@ -11,7 +13,7 @@
 using namespace std;
 
 class Menu {
-    private:
+    protected:
         int size;
         Item **slot;
     public:
@@ -38,6 +40,9 @@ class Inventory : public Menu {
 class Crafting : public Menu {
     public:
         Crafting();
+
+        void craft(ListRecipe* listRecipe);
+        bool checkRecipe(Recipe* recipe);
 };
 
 #endif

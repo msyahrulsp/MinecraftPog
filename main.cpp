@@ -68,7 +68,24 @@ int main() {
 
     getline(recipeConfigFile, line);
     readItem = split(line);
-    tempRecipe->setOutput(readItem[0], stoi(readItem[1]));
+
+    int itemIdx = listItem.findItem(readItem[0]);
+    if (itemIdx != -1) {
+      tempId = listItem.getId(itemIdx);
+      tType = listItem.getType(itemIdx);
+      tTool = listItem.getCat(itemIdx);
+
+      if (tTool == "TOOL") {
+        tempItem = new Tool(tempId, readItem[0], tType, tTool, 10);
+      } else {
+        tempItem = new NonTool(tempId, readItem[0], tType, tTool, stoi(readItem[1]));
+      }
+
+      tempRecipe->setOutput(tempItem);
+    } else {
+      cout << "Nama Item di File Input salah" << endl;
+      exit(0);
+    }
     
     listRecipe->addRecipe(*tempRecipe);
   };
@@ -84,7 +101,17 @@ int main() {
       }
       cout << "Exported" << endl;
     } else if (command == "CRAFT") {
-      cout << "TODO" << endl;
+      string craftType;
+      cin >> craftType;
+
+      if (craftType == "PARTIAL") {
+
+      } else if (craftType == "FULL") {
+
+      } else {
+        cout << "Invalid craft type" << endl;
+        craft.craft(listRecipe);
+      }
     } else if (command == "GIVE") {
       string itemName;
       int itemQty;

@@ -12,8 +12,7 @@ Recipe::Recipe() {
         this->items[i] = "-";
 }
 
-    this->output = "-";
-    this->nOutput = 0;
+    this->output = new NonTool("0", "-", "-", "-", 0);
 }
 
 Recipe::Recipe(int row, int col) : row(row), col(col) {
@@ -23,20 +22,20 @@ Recipe::Recipe(int row, int col) : row(row), col(col) {
         this->items[i] = "-";
     }
 
-    this->output = "-";
-    this->nOutput = 0;
+    this->output = new NonTool("0", "-", "-", "-", 0);
 }
 
 Recipe::~Recipe() {
     delete[] this->items;
 }
 
-string Recipe::getOutput() {
+Item* Recipe::getOutput() {
     return this->output;
 }
 
 void Recipe::printItems() {
-    cout << "Output: " << this->output << ":" << this->nOutput << endl;
+    cout << "Output: " << this->output->getName() << ":";
+    cout << (this->output->getCategory() == "TOOL" ? 1 : this->output->getSide()) << endl;
     for (int i = 0; i < this->getN(); i++) {
         cout << this->items[i];
         if ((i + 1) % this->col != 0) {
@@ -45,10 +44,6 @@ void Recipe::printItems() {
             cout << endl;
         }
     }
-}
-
-int Recipe::getNOutput() {
-    return this->nOutput;
 }
 
 int Recipe::getRow() {
@@ -80,32 +75,9 @@ void Recipe::setMaterial(int idx, string name){
     this->items[idx] = name;
 };
 
-void Recipe::setOutput(string output, int nOutput) {
+void Recipe::setOutput(Item* output) {
     this->output = output;
-    this->nOutput = nOutput;
 }
-
-// int Recipe::checkCrafting(Crafting<Item> c){
-//     /*belom dicoba semoga udah bener */
-//     bool flag;
-//     int min = 0;
-//     for(int i = 0; i < 4 - this->row ; i++){
-//         for(int j = 0; j < 4 - this->col; i++){
-//             flag = true;
-//             for(int k = 0;  k < this->row; k++){
-//                 for (int l = 0; l < this->col; l++){
-//                     if (c.getSlot(i * 3 + j).getName() != this->items[k*this->col + l]){
-//                         flag = false;
-//                         break;
-//                     } 
-//                 }
-//                 if (!flag) break;
-//             }
-//             if (flag) return flag;
-//         }
-//     }
-//     return flag;
-// }
 
 ListRecipe::ListRecipe() {
     this->size = 100;
@@ -115,6 +87,14 @@ ListRecipe::ListRecipe() {
 
 ListRecipe::~ListRecipe() {
     delete[] this->recipes;
+}
+
+int ListRecipe::getNeff() {
+    return this->neff;
+}
+
+Recipe* ListRecipe::getRecipe(int idx) {
+    return &recipes[idx];
 }
 
 void ListRecipe::printInfo() {

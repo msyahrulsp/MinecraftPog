@@ -1,3 +1,7 @@
+#ifndef _TOOL_HPP_
+#define _TOOL_HPP_
+#pragma once
+
 #include "item.hpp"
 
 class Tool : public Item {
@@ -23,3 +27,5 @@ class NonTool : public Item {
         int getSide() override;
         void setSide(int quantity) override;
 };
+
+#endif

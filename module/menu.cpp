@@ -13,7 +13,6 @@ Menu::~Menu() {
     delete[] this->slot;
 }
 
-// TODO buggy
 void Menu::addItem(Item* item) {
     for (int i = 0; i < this->size; i++) {
         int dn = this->slot[i]->getSide();
@@ -115,3 +114,42 @@ Inventory::Inventory() : Menu(SIZEI) {
 Crafting::Crafting() : Menu(SIZEC) {
     
 }
+
+void Crafting::craft(ListRecipe* listRecipe) {
+    for (int i = 0; i < listRecipe->getNeff(); i++) {
+        Recipe* curRecipe = listRecipe->getRecipe(i);
+        if (checkRecipe(curRecipe)) {
+            this->addItem(curRecipe->getOutput());
+            return;
+        }
+    }
+    cout << "Tidak ada recipe yang sesuai" << endl;
+}
+
+bool Crafting::checkRecipe(Recipe* recipe) {
+    for (int i = 0; i < this->size; i++) {
+        // TODO
+    }
+}
+
+// int Recipe::checkCrafting(Crafting<Item> c){
+//     /*belom dicoba semoga udah bener */
+//     bool flag;
+//     int min = 0;
+//     for(int i = 0; i < 4 - this->row ; i++){
+//         for(int j = 0; j < 4 - this->col; i++){
+//             flag = true;
+//             for(int k = 0;  k < this->row; k++){
+//                 for (int l = 0; l < this->col; l++){
+//                     if (c.getSlot(i * 3 + j).getName() != this->items[k*this->col + l]){
+//                         flag = false;
+//                         break;
+//                     } 
+//                 }
+//                 if (!flag) break;
+//             }
+//             if (flag) return flag;
+//         }
+//     }
+//     return flag;
+// }
