@@ -90,9 +90,15 @@ string ListItem::getCat(int idx) {
     return this->items[idx]->getCategory();
 }
 
-int ListItem::findItem(string name) {
-    for (int i = 0; i < this->neff; i++) {
-        if (this->items[i]->getName() == name) return i;
+int ListItem::findItem(string name, string type) {
+    if (type == "nama") {
+        for (int i = 0; i < this->neff; i++) {
+            if (this->items[i]->getName() == name) return i;
+        }
+    } else {
+        for (int i = 0; i < this->neff; i++) {
+            if (this->items[i]->getType() == name) return i;
+        }
     }
     return -1;
 }

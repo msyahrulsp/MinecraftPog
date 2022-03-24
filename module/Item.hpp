@@ -46,7 +46,7 @@ class ListItem {
         string getName(int idx);
         string getType(int idx);
         string getCat(int idx);
-        int findItem(string name);
+        int findItem(string name, string type);
 
         friend void operator<<(ListItem& listItem, Item &item);
 };

@@ -69,7 +69,7 @@ int main() {
     getline(recipeConfigFile, line);
     readItem = split(line);
 
-    int itemIdx = listItem.findItem(readItem[0]);
+    int itemIdx = listItem.findItem(readItem[0], "nama");
     if (itemIdx != -1) {
       tempId = listItem.getId(itemIdx);
       tType = listItem.getType(itemIdx);
@@ -105,9 +105,9 @@ int main() {
       cin >> craftType;
 
       if (craftType == "ONCE") {
-        craft.craft(&listRecipe, &invent, false);
+        craft.craft(&listRecipe, &invent, false, &listItem);
       } else if (craftType == "ALL") {
-        craft.craft(&listRecipe, &invent, true);
+        craft.craft(&listRecipe, &invent, true, &listItem);
       } else {
         cout << "Invalid craft type" << endl;
       }
@@ -116,7 +116,7 @@ int main() {
       int itemQty;
       cin >> itemName >> itemQty;
 
-      int itemIdx = listItem.findItem(itemName);
+      int itemIdx = listItem.findItem(itemName, "nama");
       if (itemIdx != -1) {
         tempId = listItem.getId(itemIdx);
         tName = listItem.getName(itemIdx);

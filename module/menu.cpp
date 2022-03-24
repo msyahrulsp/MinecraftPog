@@ -173,7 +173,7 @@ int Crafting::getMinItem() {
     return temp;
 }
 
-void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
+void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListItem* listItem) {
     if (this->validCombine()) {
         // TODO handle kalau gk valid
         string id, name;
@@ -191,10 +191,11 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
         this->erase();
         return;
     }
+
     for (int i = 0; i < listRecipe->getNeff(); i++) {
         Recipe* curRecipe = listRecipe->getRecipe(i);
 
-        if (checkRecipeBlock(curRecipe, true) || checkRecipeBlock(curRecipe, false)) {
+        if (checkRecipeBlock(curRecipe, true, listItem) || checkRecipeBlock(curRecipe, false, listItem)) {
             int loop = (full ? this->getMinItem() : 1);
             string id = curRecipe->getOutput()->getId();
             string name = curRecipe->getOutput()->getName();
@@ -257,17 +258,21 @@ Recipe* Crafting::getCurCraft() {
     return res;
 }
 
-bool Crafting::checkRecipeBlock(Recipe* recipe, bool byBlock) {
+bool Crafting::checkRecipeBlock(Recipe* recipe, bool byBlock, ListItem* listItem) {
     Recipe* curMat = this->getCurCraft();
     string temp1, temp2;
 
     if (recipe->getRow() == curMat->getRow() && recipe->getCol() == curMat->getCol()) {
         for (int i = 0; i < curMat->getN(); i++) {
-            temp2 = curMat->getItems(i);
             if (byBlock) {
                 temp1 = recipe->getItems(i);
+                temp2 = curMat->getItems(i);
             } else {
-                temp1 = recipe->getType(i);
+                int idx = listItem->findItem(recipe->getItems(i), "type");
+                temp1 = listItem->getType(idx);
+                idx = listItem->findItem(recipe->getItems(i), "type");
+                temp2 = listItem->getType(idx);
+                cout << temp1 << endl;
             }
             if (temp1 != temp2) return false;
         }

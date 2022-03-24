@@ -48,9 +48,9 @@ class Crafting : public Menu {
         bool validCombine();
         void erase();
         int getMinItem();
-        void craft(ListRecipe* listRecipe, Inventory* invent, bool full);
+        void craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListItem* listItem);
         Recipe* getCurCraft();
-        bool checkRecipeBlock(Recipe* recipe, bool byBlock);
+        bool checkRecipeBlock(Recipe* recipe, bool byBlock, ListItem* listItem);
 };
 
 #endif
