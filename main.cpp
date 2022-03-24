@@ -28,7 +28,7 @@ int main() {
   ListItem listItem = ListItem();
   Inventory invent = Inventory();
   Crafting craft = Crafting();
-  ListRecipe listRecipe = ListRecipe();
+  ListRecipe *listRecipe = new ListRecipe();
   Recipe *tempRecipe;
   Item *tempItem;
   string tempId, tName, tType, tTool;
@@ -68,27 +68,10 @@ int main() {
 
     getline(recipeConfigFile, line);
     readItem = split(line);
-
-    int itemIdx = listItem.findItem(readItem[0], "nama");
-    if (itemIdx != -1) {
-      tempId = listItem.getId(itemIdx);
-      tType = listItem.getType(itemIdx);
-      tTool = listItem.getCat(itemIdx);
-
-      if (tTool == "TOOL") {
-        tempItem = new Tool(tempId, readItem[0], tType, tTool, 10);
-      } else {
-        tempItem = new NonTool(tempId, readItem[0], tType, tTool, stoi(readItem[1]));
-      }
-
-      tempRecipe->setOutput(tempItem);
-    } else {
-      cout << "Nama Item di File Input salah" << endl;
-      exit(0);
-    }
+    tempRecipe->setOutput(readItem[0], stoi(readItem[1]));
     
-    listRecipe.addRecipe(*tempRecipe);
-  }
+    listRecipe->addRecipe(*tempRecipe);
+  };
 
   string command;
   while (cin >> command) {
@@ -101,22 +84,13 @@ int main() {
       }
       cout << "Exported" << endl;
     } else if (command == "CRAFT") {
-      string craftType;
-      cin >> craftType;
-
-      if (craftType == "ONCE") {
-        craft.craft(&listRecipe, &invent, false, &listItem);
-      } else if (craftType == "ALL") {
-        craft.craft(&listRecipe, &invent, true, &listItem);
-      } else {
-        cout << "Invalid craft type" << endl;
-      }
+      cout << "TODO" << endl;
     } else if (command == "GIVE") {
       string itemName;
       int itemQty;
       cin >> itemName >> itemQty;
 
-      int itemIdx = listItem.findItem(itemName, "nama");
+      int itemIdx = listItem.findItem(itemName);
       if (itemIdx != -1) {
         tempId = listItem.getId(itemIdx);
         tName = listItem.getName(itemIdx);
@@ -124,36 +98,49 @@ int main() {
         tTool = listItem.getCat(itemIdx);
 
         if (tTool == "TOOL") {
-          for (int i = 0; i < itemQty; i++) {
-            tempItem = new Tool(tempId, tName, tType, tTool, 5);
-            craft.addItem(tempItem);
-          }
+          tempItem = new Tool(tempId, tName, tType, tTool, 10);
         } else {
-          while (itemQty > 0) {
-            int qt = (itemQty >= 64 ? 64 : itemQty);
-            tempItem = new NonTool(tempId, tName, tType, tTool, qt);
-            craft.addItem(tempItem);
-            itemQty -= qt;
-          }
+          tempItem = new NonTool(tempId, tName, tType, tTool, itemQty);
         }
+
+        invent.addItem(tempItem);
       } else {
         cout << "Item tidak terdaftar" << endl;
-        exit(1);
       }
     } else if (command == "MOVE") {
       string slotSrc;
       int slotQty;
       string slotDest;
       
-      cin >> slotSrc >> slotQty >> slotDest;
+      cin >> slotSrc >> slotQty;
+      for (int i = 0; i < slotQty; i++) {
+        cin >> slotDest;
 
-      // bisa ada n tujuan
+        char srcType = slotSrc[0];
+        char destType = slotDest[0];
+        int srcDest = (int)slotSrc[1]-48;
+        int destDest = (int)slotDest[1]-48;
 
-      char srcType = slotSrc[0];
-      char destType = slotDest[0];
-      int srcDest = slotSrc[1];
-      int destDest = slotDest[1];
-      cout << "TODO" << endl;
+        if (srcType == 'I') {
+          if (destType == 'I') {
+            invent.move(srcDest, destDest);
+          } else if (destType == 'C') {
+            invent.move(srcDest, destDest, &craft);
+          } else {
+            cout << "Tujuan invalid" << endl;
+          }
+        } else if (srcType == 'C') {
+          if (destType == 'I') {
+            craft.move(srcDest, destDest, &invent);
+          } else if (destType == 'C') {
+            craft.move(srcDest, destDest);
+          } else {
+            cout << "Tujuan invalid" << endl;
+          }
+        } else {
+          cout << "Tujuan invalid" << endl;
+        }
+      }
     } else if (command == "SHOW") {
       craft.display();
       invent.display();
@@ -208,3 +195,6 @@ int main() {
   }
   return 0;
 }
+
+// TO DO
+// MOVE WITH MANY DESTINATION

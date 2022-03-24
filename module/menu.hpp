@@ -23,12 +23,14 @@ class Menu {
         void addItem(Item* item);
         void discard(int idx, int qty);
         void use(int idx);
+        void move(int src, int dest);
+        void move(int src, int dest, Menu* destList);
 
         Item* getSlot(int idx);
         int findTool(string cat);
 
         bool isEmpty(int idx);
-        int haveItem(string name);
+        bool haveItem(string name);
 
         void display();
 };

@@ -14,37 +14,38 @@ Menu::~Menu() {
 }
 
 void Menu::addItem(Item* item) {
-    if (item->getCategory() == "NONTOOL") {
-        int idx = haveItem(item->getName());
-        if (idx != -1) {
-            if (this->slot[idx]->getSide() + item->getSide() <= 64) {
-                this->slot[idx]->setSide(this->slot[idx]->getSide() + item->getSide());
-                return;
+    for (int i = 0; i < this->size; i++) {
+        int dn = this->slot[i]->getSide();
+        int dn2 = item->getSide();
+        string name = this->slot[i]->getName();
+        if (this->slot[i]->getCategory() == "NONTOOL") {
+            // Ada item nontool yang bisa distack
+            if (haveItem(item->getName())) {
+                if (name == item->getName()) {
+                    if (dn + dn2 <= 64) {
+                        this->slot[i]->setSide(dn + dn2);
+                        return;
+                    } else {
+                        this->slot[i]->setSide(64);
+                        item->setSide(dn2 - (64 - dn));
+                        // rekursif dari awal loop
+                        this->addItem(item);
+                    } 
+                }
             } else {
-                item->setSide(item->getSide() - (64 - this->slot[idx]->getSide()));
-                this->slot[idx]->setSide(64);
-                this->addItem(item);
+                if (isEmpty(i)) {
+                    this->slot[i] = item;
+                    return;
+                }
+            }
+        } else {
+            if (isEmpty(i)) {
+                this->slot[i] = item;
                 return;
             }
         }
-    }
-
-    for (int i = 0; i < this->size; i++) {
-        if (isEmpty(i)) {
-            this->slot[i] = item;
-            return;
-        }
-    }
-
-    cout << "Slot penuh! ";
-
-    if (item->getCategory() == "NONTOOL" && item->getSide() > 0) {
-        cout << item->getSide() << " " << item->getName() << " jatuh ke tanah!" << endl;
-    }
-
-    if (item->getCategory() == "TOOL") {
-        cout << item->getName() << " jatuh ke tanah!" << endl;
-    }
+    }  
+    cout << "Inventory penuh!" << endl;
 }
 
 void Menu::discard(int idx, int qty) {
@@ -77,8 +78,103 @@ void Menu::use(int idx) {
     }
 }
 
+void Menu::move(int src, int dest) {
+    Item* itemSrc = this->getSlot(src);
+    Item* itemDest = this->getSlot(dest);
+
+    if (itemSrc->getCategory() == "NONTOOL") {
+        if (itemSrc->getName() == itemDest->getName()) {
+            if (itemDest->getSide() <= 63) {
+                itemSrc->setSide(itemSrc->getSide()-1);
+                itemDest->setSide(itemDest->getSide()+1);
+
+                if (itemSrc->getSide() == 0) {
+                    this->slot[src] = AIR;
+                }
+            } else {
+                cout << "Slot " << dest << " penuh" << endl;
+            }
+        } else if (itemDest->getId() == "0") {
+            string id = itemSrc->getId();
+            string name = itemSrc->getName();
+            string type = itemSrc->getType();
+            itemSrc->setSide(itemSrc->getSide()-1);
+
+            if (itemSrc->getSide() == 0) {
+                this->slot[src] = AIR;
+            }
+
+            this->slot[dest] = new NonTool(id, name, type, "NONTOOL", 1);
+        } else {
+            cout << "Item tidak sama" << endl;
+        }
+    } else {
+        if (itemDest->getId() == "0") {
+            this->slot[dest] = itemSrc;
+            this->slot[src] = AIR;
+        } else {
+            cout << "Slot " << dest << " terisi" << endl;
+        }
+    }
+}
+
+void Menu::move(int src, int dest, Menu* destList) {
+    Item* itemSrc = this->getSlot(src);
+    Item* itemDest = destList->getSlot(dest);
+
+    if (itemSrc->getCategory() == "NONTOOL") {
+        if (itemSrc->getName() == itemDest->getName()) {
+            if (itemDest->getSide() <= 63) {
+                itemSrc->setSide(itemSrc->getSide()-1);
+                itemDest->setSide(itemDest->getSide()+1);
+
+                if (itemSrc->getSide() == 0) {
+                    this->slot[src] = AIR;
+                }
+            } else {
+                cout << "Slot " << dest << (destList->size == 9 ? "Crafting" : "Inventory");
+                cout << " penuh" << endl;
+            }
+        } else if (itemDest->getId() == "0") {
+            string id = itemSrc->getId();
+            string name = itemSrc->getName();
+            string type = itemSrc->getType();
+            itemSrc->setSide(itemSrc->getSide()-1);
+
+            if (itemSrc->getSide() == 0) {
+                this->slot[src] = AIR;
+            }
+
+            destList->slot[dest] = new NonTool(id, name, type, "NONTOOL", 1);
+        } else {
+            cout << "Item tidak sama" << endl;
+        }
+    } else {
+        if (itemDest->getId() == "0") {
+            destList->slot[dest] = itemSrc;
+            this->slot[src] = AIR;
+        } else {
+            cout << "Slot " << dest << (destList->size == 9 ? "Crafting" : "Inventory");
+            cout << " terisi" << endl;
+        }
+    }
+}
+
 Item* Menu::getSlot(int idx) {
     return this->slot[idx];
+}
+
+bool Menu::isEmpty(int idx) {
+    return this->slot[idx]->getId() == "0";
+}
+
+bool Menu::haveItem(string name) {
+    for (int i = 0; i < this->size; i++) {
+        int dn = this->slot[i]->getSide();
+        string tName = this->slot[i]->getName();
+        if (tName == name && dn < 64) return true;
+    }
+    return false;
 }
 
 int Menu::findTool(string cat) {
@@ -95,13 +191,13 @@ bool Menu::isEmpty(int idx) {
     return this->slot[idx]->getId() == "0";
 }
 
-int Menu::haveItem(string name) {
+bool Menu::haveItem(string name) {
     for (int i = 0; i < this->size; i++) {
         int dn = this->slot[i]->getSide();
         string tName = this->slot[i]->getName();
-        if (tName == name && dn < 64) return i;
+        if (tName == name && dn < 64) return true;
     }
-    return -1;
+    return false;
 }
 
 void Menu::display() {
