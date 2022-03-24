@@ -52,7 +52,7 @@ class Crafting : public Menu {
         int getMinItem();
         void craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListItem* listItem);
         Recipe* getCurCraft();
-        bool checkRecipeBlock(Recipe* recipe, bool byBlock, ListItem* listItem);
+        bool checkRecipe(Recipe* recipe, bool byBlock, ListItem* listItem);
 };
 
 #endif

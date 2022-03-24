@@ -28,7 +28,7 @@ int main() {
   ListItem listItem = ListItem();
   Inventory invent = Inventory();
   Crafting craft = Crafting();
-  ListRecipe *listRecipe = new ListRecipe();
+  ListRecipe listRecipe = ListRecipe();
   Recipe *tempRecipe;
   Item *tempItem;
   string tempId, tName, tType, tTool;
@@ -68,9 +68,25 @@ int main() {
 
     getline(recipeConfigFile, line);
     readItem = split(line);
-    tempRecipe->setOutput(readItem[0], stoi(readItem[1]));
+    int itemIdx = listItem.findItem(readItem[0], "nama");
+    if (itemIdx != -1) {
+      tempId = listItem.getId(itemIdx);
+      tType = listItem.getType(itemIdx);
+      tTool = listItem.getCat(itemIdx);
+
+      if (tTool == "TOOL") {
+        tempItem = new Tool(tempId, readItem[0], tType, tTool, 10);
+      } else {
+        tempItem = new NonTool(tempId, readItem[0], tType, tTool, stoi(readItem[1]));
+      }
+
+      tempRecipe->setOutput(tempItem);
+    } else {
+      cout << "Nama Item di File Input salah" << endl;
+      exit(0);
+    }
     
-    listRecipe->addRecipe(*tempRecipe);
+    listRecipe.addRecipe(*tempRecipe);
   };
 
   string command;
@@ -84,13 +100,22 @@ int main() {
       }
       cout << "Exported" << endl;
     } else if (command == "CRAFT") {
-      cout << "TODO" << endl;
+      string craftType;
+      cin >> craftType;
+
+      if (craftType == "ONCE") {
+        craft.craft(&listRecipe, &invent, false, &listItem);
+      } else if (craftType == "ALL") {
+        craft.craft(&listRecipe, &invent, true, &listItem);
+      } else {
+        cout << "Invalid craft type" << endl;
+      }
     } else if (command == "GIVE") {
       string itemName;
       int itemQty;
       cin >> itemName >> itemQty;
 
-      int itemIdx = listItem.findItem(itemName);
+      int itemIdx = listItem.findItem(itemName, "nama");
       if (itemIdx != -1) {
         tempId = listItem.getId(itemIdx);
         tName = listItem.getName(itemIdx);

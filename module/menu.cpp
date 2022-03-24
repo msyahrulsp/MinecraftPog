@@ -187,19 +187,6 @@ int Menu::findTool(string cat) {
     return -1;
 }
 
-bool Menu::isEmpty(int idx) {
-    return this->slot[idx]->getId() == "0";
-}
-
-bool Menu::haveItem(string name) {
-    for (int i = 0; i < this->size; i++) {
-        int dn = this->slot[i]->getSide();
-        string tName = this->slot[i]->getName();
-        if (tName == name && dn < 64) return true;
-    }
-    return false;
-}
-
 void Menu::display() {
     for (int i = 0; i < this->size; i++) {
         if (this->size == 9 && (i + 1) % (this->size / 3) == 1) cout << "\t\t\t";
@@ -291,7 +278,7 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListI
     for (int i = 0; i < listRecipe->getNeff(); i++) {
         Recipe* curRecipe = listRecipe->getRecipe(i);
 
-        if (checkRecipeBlock(curRecipe, true, listItem) || checkRecipeBlock(curRecipe, false, listItem)) {
+        if (checkRecipe(curRecipe, true, listItem) || checkRecipe(curRecipe, false, listItem)) {
             int loop = (full ? this->getMinItem() : 1);
             string id = curRecipe->getOutput()->getId();
             string name = curRecipe->getOutput()->getName();
@@ -354,7 +341,7 @@ Recipe* Crafting::getCurCraft() {
     return res;
 }
 
-bool Crafting::checkRecipeBlock(Recipe* recipe, bool byBlock, ListItem* listItem) {
+bool Crafting::checkRecipe(Recipe* recipe, bool byBlock, ListItem* listItem) {
     Recipe* curMat = this->getCurCraft();
     string temp1, temp2;
 
@@ -370,8 +357,12 @@ bool Crafting::checkRecipeBlock(Recipe* recipe, bool byBlock, ListItem* listItem
                 } else {
                     return false;
                 }
-                cout << idx << endl;
                 temp1 = listItem->getType(idx);
+                if (idx != -1) {
+                    temp1 = listItem->getType(idx);
+                } else {
+                    return false;
+                }
                 idx = listItem->findItem(curMat->getItems(i), "type");
                 if (idx != -1) {
                     temp2 = listItem->getType(idx);
