@@ -81,9 +81,10 @@ Item* Menu::getSlot(int idx) {
     return this->slot[idx];
 }
 
-int Menu::findTool() {
+int Menu::findTool(string cat) {
     for (int i = 0; i < this->size; i++) {
-        if (this->slot[i]->getCategory() == "TOOL") {
+        bool airPass = (cat == "NONTOOL" ?  this->slot[i]->getId() != "0" : true);
+        if (this->slot[i]->getCategory() == cat && airPass) {
             return i;
         }
     }
@@ -124,14 +125,13 @@ Crafting::Crafting() : Menu(SIZEC) {
 }
 
 int Crafting::toolCount() {
-    int idx = this->findTool();
-    string name = this->slot[idx]->getName();
+    int idx = this->findTool("TOOL");
     if (idx != -1) {
         int res = 1;
+        string name = this->slot[idx]->getName();
         for (int i = idx+1; i < this->size; i++) {
             if (this->slot[i]->getName() == name) res++;
         }
-        cout << "Here tc";
         return res;
     }
     return 0;
@@ -142,12 +142,10 @@ int Crafting::nonToolCount() {
     for (int i = 0; i < this->size; i++) {
         if (this->slot[i]->getCategory() == "NONTOOL"&& this->slot[i]->getId() != "0") count++;
     }
-    cout << "Here ntc";
     return count;
 }
 
 bool Crafting::validCombine() {
-    cout << "Here vc";
     int tc = this->toolCount();
     int ntc = this->nonToolCount();
 
@@ -166,8 +164,16 @@ void Crafting::erase() {
     }
 }
 
-void Crafting::craft(ListRecipe& listRecipe, Inventory* invent, bool full) {
-    cout << "Here c";
+int Crafting::getMinItem() {
+    int idx = this->findTool("NONTOOL");
+    int temp = this->slot[idx]->getSide();
+    for (int i = 1; i < this->size; i++) {
+        if (this->slot[i]->getSide() < temp && this->slot[i]->getId() != "0") temp = this->slot[i]->getSide();
+    }
+    return temp;
+}
+
+void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
     if (this->validCombine()) {
         string id, name;
         int dura = 0;
@@ -184,39 +190,53 @@ void Crafting::craft(ListRecipe& listRecipe, Inventory* invent, bool full) {
         this->erase();
         return;
     }
-    cout << "HereA" << endl;
-    for (int i = 0; i < listRecipe.getNeff(); i++) {
-        Recipe* curRecipe = listRecipe.getRecipe(i);
-        if (checkRecipe(curRecipe)) {
-            invent->addItem(curRecipe->getOutput());
-            this->erase();
-            if (full) this->craft(listRecipe, invent, true);
+    for (int i = 0; i < listRecipe->getNeff(); i++) {
+        Recipe* curRecipe = listRecipe->getRecipe(i);
+
+        if (checkRecipeBlock(curRecipe)) {
+            int loop = (full ? this->getMinItem() : 1);
+            string id = curRecipe->getOutput()->getId();
+            string name = curRecipe->getOutput()->getName();
+            string type = curRecipe->getOutput()->getType();
+            string cat = curRecipe->getOutput()->getCategory();
+            int qty = curRecipe->getOutput()->getSide();
+            Item* tempItem;
+
+            for (int i = 0; i < loop; i++) {
+                if (cat == "TOOl") {
+                    tempItem = new Tool(id, name, type, cat, 10);
+                } else {
+                    tempItem = new NonTool(id, name, type, cat, qty);
+                }
+                invent->addItem(tempItem);
+                this->erase();
+            }
             return;
         }
     }
 }
 
-bool Crafting::checkRecipe(Recipe* recipe) {
-    cout << "Here1" << endl;
-    int req = recipe->getRow() * recipe->getCol();
+bool Crafting::checkRecipeBlock(Recipe* recipe) {
+    bool equal;
     for (int i = 0; i < 4 - recipe->getRow(); i++) {
         for (int j = 0; j < 4 - recipe->getCol(); j++) {
-            bool equal = true;
-            for (int k = i; k < recipe->getRow() && equal; k++) {
-                for (int l = j; l < recipe->getCol() && equal; l++) {
-                    string cName = this->slot[k + l]->getName();
-                    string cType = this->slot[k + l]->getType();
-                    string rec = recipe->getItems((k-i) + (j-l));
-                    if (cName != rec && cType != rec) {
+            equal = true;
+            for (int k = 0; k < recipe->getRow(); k++) {
+                for (int l = 0; l < recipe->getCol(); l++) {
+                    string cName = this->slot[i*3 + j]->getName();
+                    string rec = recipe->getItems(k * recipe->getCol() + l);
+                    if (cName != rec) {
                         equal = false;
+                        break;
                     }
                 }
+                if (!equal) break;
             }
             if (equal) return true;
         }
     }
+    return equal;
 
-    // TODO Orientasi Tool
-    cout << "Here" << endl;
-    return false;
+    // TODO Orientasi Tool + Cek by Type
+    // 1x1 yang ada item selain mat craft masih ke bawa
 }

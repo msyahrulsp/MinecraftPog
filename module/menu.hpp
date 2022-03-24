@@ -8,7 +8,7 @@
 
 #define SIZEI 27
 #define SIZEC 9
-#define AIR new NonTool("0", "", "", "", 0)
+#define AIR new NonTool("0", "-", "-", "-", 0)
 
 using namespace std;
 
@@ -25,7 +25,7 @@ class Menu {
         void use(int idx);
 
         Item* getSlot(int idx);
-        int findTool();
+        int findTool(string cat);
 
         bool isEmpty(int idx);
         int haveItem(string name);
@@ -47,8 +47,9 @@ class Crafting : public Menu {
 
         bool validCombine();
         void erase();
-        void craft(ListRecipe& listRecipe, Inventory* invent, bool full);
-        bool checkRecipe(Recipe* recipe);
+        int getMinItem();
+        void craft(ListRecipe* listRecipe, Inventory* invent, bool full);
+        bool checkRecipeBlock(Recipe* recipe);
 };
 
 #endif

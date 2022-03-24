@@ -88,7 +88,7 @@ int main() {
     }
     
     listRecipe.addRecipe(*tempRecipe);
-  };
+  }
 
   string command;
   while (cin >> command) {
@@ -105,11 +105,9 @@ int main() {
       cin >> craftType;
 
       if (craftType == "ONCE") {
-        // craft.display();
-        cout << "Here";
-        craft.craft(listRecipe, &invent, false);
+        craft.craft(&listRecipe, &invent, false);
       } else if (craftType == "ALL") {
-        craft.craft(listRecipe, &invent, true);
+        craft.craft(&listRecipe, &invent, true);
       } else {
         cout << "Invalid craft type" << endl;
       }
