@@ -269,10 +269,19 @@ bool Crafting::checkRecipeBlock(Recipe* recipe, bool byBlock, ListItem* listItem
                 temp2 = curMat->getItems(i);
             } else {
                 int idx = listItem->findItem(recipe->getItems(i), "type");
+                if (idx != -1) {
+                    temp1 = listItem->getType(idx);
+                } else {
+                    return false;
+                }
+                cout << idx << endl;
                 temp1 = listItem->getType(idx);
-                idx = listItem->findItem(recipe->getItems(i), "type");
-                temp2 = listItem->getType(idx);
-                cout << temp1 << endl;
+                idx = listItem->findItem(curMat->getItems(i), "type");
+                if (idx != -1) {
+                    temp2 = listItem->getType(idx);
+                } else {
+                    return false;
+                }
             }
             if (temp1 != temp2) return false;
         }

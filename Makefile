@@ -6,7 +6,7 @@ EXECUTABLE_FILENAME = main
 ALL_SRCS := $(wildcard *.cpp) $(wildcard module/*.cpp)
 SRCS     := $(filter-out check.cpp, $(ALL_SRCS))
 
-all: compile test
+all: compile test check
 
 # Compile all cpp files except check.cpp
 compile:
