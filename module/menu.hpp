@@ -28,7 +28,7 @@ class Menu {
         int findTool();
 
         bool isEmpty(int idx);
-        bool haveItem(string name);
+        int haveItem(string name);
 
         void display();
 };

@@ -124,12 +124,18 @@ int main() {
         tTool = listItem.getCat(itemIdx);
 
         if (tTool == "TOOL") {
-          tempItem = new Tool(tempId, tName, tType, tTool, 10);
+          for (int i = 0; i < itemQty; i++) {
+            tempItem = new Tool(tempId, tName, tType, tTool, 10);
+            invent.addItem(tempItem);
+          }
         } else {
-          tempItem = new NonTool(tempId, tName, tType, tTool, itemQty);
+          while (itemQty > 0) {
+            int qt = (itemQty >= 64 ? 64 : itemQty);
+            tempItem = new NonTool(tempId, tName, tType, tTool, qt);
+            invent.addItem(tempItem);
+            itemQty -= qt;
+          }
         }
-
-        invent.addItem(tempItem);
       } else {
         cout << "Item tidak terdaftar" << endl;
       }

@@ -14,38 +14,29 @@ Menu::~Menu() {
 }
 
 void Menu::addItem(Item* item) {
-    for (int i = 0; i < this->size; i++) {
-        int dn = this->slot[i]->getSide();
-        int dn2 = item->getSide();
-        string name = this->slot[i]->getName();
-        if (this->slot[i]->getCategory() == "NONTOOL") {
-            // Ada item nontool yang bisa distack
-            if (haveItem(item->getName())) {
-                if (name == item->getName()) {
-                    if (dn + dn2 <= 64) {
-                        this->slot[i]->setSide(dn + dn2);
-                        return;
-                    } else {
-                        this->slot[i]->setSide(64);
-                        item->setSide(dn2 - (64 - dn));
-                        // rekursif dari awal loop
-                        this->addItem(item);
-                    } 
-                }
+    if (item->getCategory() == "NONTOOL") {
+        int idx = haveItem(item->getName());
+        if (idx != -1) {
+            if (this->slot[idx]->getSide() + item->getSide() <= 64) {
+                this->slot[idx]->setSide(this->slot[idx]->getSide() + item->getSide());
+                return;
             } else {
-                if (isEmpty(i)) {
-                    this->slot[i] = item;
-                    return;
-                }
-            }
-        } else {
-            if (isEmpty(i)) {
-                this->slot[i] = item;
+                item->setSide(item->getSide() - (64 - this->slot[idx]->getSide()));
+                this->slot[idx]->setSide(64);
+                this->addItem(item);
                 return;
             }
         }
     }
-    cout << "Inventory penuh! ";
+
+    for (int i = 0; i < this->size; i++) {
+        if (isEmpty(i)) {
+            this->slot[i] = item;
+            return;
+        }
+    }
+
+    cout << "Slot penuh! ";
 
     if (item->getCategory() == "NONTOOL" && item->getSide() > 0) {
         cout << item->getSide() << " " << item->getName() << " jatuh ke tanah!" << endl;
@@ -103,13 +94,13 @@ bool Menu::isEmpty(int idx) {
     return this->slot[idx]->getId() == "0";
 }
 
-bool Menu::haveItem(string name) {
+int Menu::haveItem(string name) {
     for (int i = 0; i < this->size; i++) {
         int dn = this->slot[i]->getSide();
         string tName = this->slot[i]->getName();
-        if (tName == name && dn < 64) return true;
+        if (tName == name && dn < 64) return i;
     }
-    return false;
+    return -1;
 }
 
 void Menu::display() {
@@ -205,6 +196,7 @@ bool Crafting::checkRecipe(Recipe* recipe) {
     // Brute Force Pog
     for (int i = 0; i < this->size; i++) {
         // TODO
+        return false;
     }
 }
 
