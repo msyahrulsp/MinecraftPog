@@ -175,6 +175,7 @@ int Crafting::getMinItem() {
 
 void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
     if (this->validCombine()) {
+        // TODO handle kalau gk valid
         string id, name;
         int dura = 0;
         for (int i = 0; i < this->size; i++) {
@@ -193,7 +194,7 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
     for (int i = 0; i < listRecipe->getNeff(); i++) {
         Recipe* curRecipe = listRecipe->getRecipe(i);
 
-        if (checkRecipeBlock(curRecipe)) {
+        if (checkRecipeBlock(curRecipe, true) || checkRecipeBlock(curRecipe, false)) {
             int loop = (full ? this->getMinItem() : 1);
             string id = curRecipe->getOutput()->getId();
             string name = curRecipe->getOutput()->getName();
@@ -216,27 +217,61 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
     }
 }
 
-bool Crafting::checkRecipeBlock(Recipe* recipe) {
-    bool equal;
-    for (int i = 0; i < 4 - recipe->getRow(); i++) {
-        for (int j = 0; j < 4 - recipe->getCol(); j++) {
-            equal = true;
-            for (int k = 0; k < recipe->getRow(); k++) {
-                for (int l = 0; l < recipe->getCol(); l++) {
-                    string cName = this->slot[i*3 + j]->getName();
-                    string rec = recipe->getItems(k * recipe->getCol() + l);
-                    if (cName != rec) {
-                        equal = false;
-                        break;
-                    }
-                }
-                if (!equal) break;
-            }
-            if (equal) return true;
+Recipe* Crafting::getCurCraft() {
+    // i j min i j max
+    int* limit = new int[4];
+    limit[0] = 10;
+    limit[1] = 10;
+    limit[2] = -1;
+    limit[3] = -1;
+
+    int temp;
+    for (int i = 0; i < 9; i++) {
+        if (this->slot[i]->getId() != "0") {
+            int idx1 = i / 3;
+            int idx2 = i % 3;
+            if (limit[0] > idx1) limit[0] = idx1;
+            if (limit[1] > idx2) limit[1] = idx2;
+            if (limit[2] < idx1) limit[2] = idx1;
+            if (limit[3] < idx2) limit[3] = idx2;
         }
     }
-    return equal;
 
-    // TODO Orientasi Tool + Cek by Type
-    // 1x1 yang ada item selain mat craft masih ke bawa
+    int sizeI = limit[2] - limit[0] + 1;
+    int sizeJ = limit[3] - limit[1] + 1;
+    Recipe* res = new Recipe(sizeI, sizeJ);
+
+    int idx = 0;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (i >= limit[0] && i <= limit[2] && j >= limit[1] && j <= limit[3]) {
+                string name = this->slot[i * 3 + j]->getName();
+                res->setMaterial(idx, name);
+                idx++;
+            }
+        }
+    }
+
+    res->setOutput(AIR);
+
+    return res;
+}
+
+bool Crafting::checkRecipeBlock(Recipe* recipe, bool byBlock) {
+    Recipe* curMat = this->getCurCraft();
+    string temp1, temp2;
+
+    if (recipe->getRow() == curMat->getRow() && recipe->getCol() == curMat->getCol()) {
+        for (int i = 0; i < curMat->getN(); i++) {
+            temp2 = curMat->getItems(i);
+            if (byBlock) {
+                temp1 = recipe->getItems(i);
+            } else {
+                temp1 = recipe->getType(i);
+            }
+            if (temp1 != temp2) return false;
+        }
+        return true;
+    }
+    return false;
 }

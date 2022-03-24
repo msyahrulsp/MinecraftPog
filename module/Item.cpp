@@ -14,6 +14,13 @@ Item::Item(string id, string name, string type, string category) {
     this->category = category;
 }
 
+Item::Item(const Item& item) {
+    this->id = item.id;
+    this->name = item.name;
+    this->type = item.type;
+    this->category = item.category;
+}
+
 string Item::getId() const {
     return this->id;
 }

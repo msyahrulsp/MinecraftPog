@@ -49,7 +49,8 @@ class Crafting : public Menu {
         void erase();
         int getMinItem();
         void craft(ListRecipe* listRecipe, Inventory* invent, bool full);
-        bool checkRecipeBlock(Recipe* recipe);
+        Recipe* getCurCraft();
+        bool checkRecipeBlock(Recipe* recipe, bool byBlock);
 };
 
 #endif

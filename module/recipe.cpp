@@ -62,8 +62,9 @@ string Recipe::getItems(int idx) {
     return this->items[idx];
 }
 
-void Recipe::setItems(int idx, string item) {
-    this->items[idx] = item;
+string Recipe::getType(int idx) {
+    // TODO Belum
+    return this->items[idx];
 }
 
 void Recipe::setRowCol(int row, int col) {

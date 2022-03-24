@@ -125,8 +125,8 @@ int main() {
 
         if (tTool == "TOOL") {
           for (int i = 0; i < itemQty; i++) {
-            tempItem = new Tool(tempId, tName, tType, tTool, 10);
-            invent.addItem(tempItem);
+            tempItem = new Tool(tempId, tName, tType, tTool, 5);
+            craft.addItem(tempItem);
           }
         } else {
           while (itemQty > 0) {
@@ -138,6 +138,7 @@ int main() {
         }
       } else {
         cout << "Item tidak terdaftar" << endl;
+        exit(1);
       }
     } else if (command == "MOVE") {
       string slotSrc;

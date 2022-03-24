@@ -15,6 +15,7 @@ class Item {
     public:
         Item();
         Item(string id, string name, string type, string category);
+        Item(const Item& item);
         
         string getId() const;
         string getName() const;
