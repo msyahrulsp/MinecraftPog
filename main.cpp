@@ -28,7 +28,7 @@ int main() {
   ListItem listItem = ListItem();
   Inventory invent = Inventory();
   Crafting craft = Crafting();
-  ListRecipe *listRecipe = new ListRecipe();
+  ListRecipe listRecipe = ListRecipe();
   Recipe *tempRecipe;
   Item *tempItem;
   string tempId, tName, tType, tTool;
@@ -87,7 +87,7 @@ int main() {
       exit(0);
     }
     
-    listRecipe->addRecipe(*tempRecipe);
+    listRecipe.addRecipe(*tempRecipe);
   };
 
   string command;
@@ -105,8 +105,10 @@ int main() {
       cin >> craftType;
 
       if (craftType == "ONCE") {
+        // craft.display();
+        cout << "Here";
         craft.craft(listRecipe, &invent, false);
-      } else if (craftType == "FULL") {
+      } else if (craftType == "ALL") {
         craft.craft(listRecipe, &invent, true);
       } else {
         cout << "Invalid craft type" << endl;
@@ -132,7 +134,7 @@ int main() {
           while (itemQty > 0) {
             int qt = (itemQty >= 64 ? 64 : itemQty);
             tempItem = new NonTool(tempId, tName, tType, tTool, qt);
-            invent.addItem(tempItem);
+            craft.addItem(tempItem);
             itemQty -= qt;
           }
         }
