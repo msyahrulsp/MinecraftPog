@@ -203,7 +203,7 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full) {
             Item* tempItem;
 
             for (int i = 0; i < loop; i++) {
-                if (cat == "TOOl") {
+                if (cat == "TOOL") {
                     tempItem = new Tool(id, name, type, cat, 10);
                 } else {
                     tempItem = new NonTool(id, name, type, cat, qty);
