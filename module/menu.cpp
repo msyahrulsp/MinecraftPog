@@ -17,20 +17,24 @@ void Menu::setSlot(Item* item, int idx) {
     this->slot[idx] = item;
 }
 
+// Add item
 void Menu::addItem(Item* item) {
     if (item->getCategory() == "NONTOOL") {
         int idx = this->haveItem(item->getName());
-        if (idx != -1) {
-            if (this->slot[idx]->getSide() + item->getSide() <= 64) {
+        if (idx != -1) { // Item gk ketemu
+            if (this->slot[idx]->getSide() + item->getSide() <= 64) { // Item di idx kalau ditambah belum 1 stack
                 this->slot[idx]->setSide(this->slot[idx]->getSide() + item->getSide());
                 return;
             } else {
-                item->setSide(item->getSide() - (64 - this->slot[idx]->getSide()));
-                this->slot[idx]->setSide(64);
-                this->addItem(item);
+                // Kuranging item penambah sesuai n yang dibutuhin
+                // buat item idx i buat nyampe 64
+                item->setSide(item->getSide() - (64 - this->slot[idx]->getSide())); 
+                this->slot[idx]->setSide(64); // Otomatis set item di idx 1 stack
+                this->addItem(item); // Rekursif panggil item sampai qty = 0
                 return;
             }
         } else {
+            // Kalau tool/armor cuman search yang kosong
             for (int i = 0; i < this->size; i++) {
                 if (isEmpty(i)) {
                     this->slot[i] = item;
@@ -60,9 +64,11 @@ void Menu::addItem(Item* item) {
 
 void Menu::discard(int idx, int qty) {
     if (this->slot[idx]->getCategory() == "NONTOOL") {
-        int n = this->slot[idx]->getSide();
+        int n = this->slot[idx]->getSide(); // ambil banyak qty nontool
         if (n >= qty) {
-            this->slot[idx]->setSide(n - qty);
+            this->slot[idx]->setSide(n - qty); // kurangin item sebanyak n
+
+            // hapus item kalau qty = 0
             if (this->slot[idx]->getSide() == 0) {
                 this->slot[idx] = AIR;
             }
@@ -70,6 +76,7 @@ void Menu::discard(int idx, int qty) {
             cout << "Item pada inventory kurang" << endl;
         }
     } else {
+        // tool/armor kalau qty = 1, otomatis hilang
         if (qty > 1) {
             cout << "Item pada inventory kurang" << endl;
         } else {
@@ -81,7 +88,7 @@ void Menu::discard(int idx, int qty) {
 void Menu::use(int idx) {
     if (this->slot[idx]->getCategory() == "TOOL" || this->slot[idx]->getCategory() == "ARMOR") {
         int n = this->slot[idx]->getSide();
-        this->slot[idx]->setSide(n-1);
+        this->slot[idx]->setSide(n-1); // kurangin dura sebanyak 1
         if (n - 1 == 0) this->slot[idx] = AIR;
     } else {
         cout << "Command hanya untuk Tool dan Armor" << endl;
@@ -105,11 +112,15 @@ void Menu::move(int src, int dest) {
     // Tool atau NonTool at least bakal ada 1
     if (itemSrc->getSide() >= 1) {
         if (itemSrc->getCategory() == "NONTOOL") {
+            // Item A == Item B (NonTool)
             if (itemSrc->getName() == itemDest->getName()) {
+                // Belum 1 stack
                 if (itemDest->getSide() <= 63) {
+                    // Kurangin item masing2 1
                     itemSrc->setSide(itemSrc->getSide()-1);
                     itemDest->setSide(itemDest->getSide()+1);
 
+                    // qty = 0 = ded
                     if (itemSrc->getSide() == 0) {
                         this->slot[src] = AIR;
                     }
@@ -214,6 +225,7 @@ bool Menu::isEmpty(int idx) {
 }
 
 int Menu::haveItem(string name) {
+    // Buat cek di give (stacking purpose)
     for (int i = 0; i < this->size; i++) {
         int dn = this->slot[i]->getSide();
         string tName = this->slot[i]->getName();
@@ -224,7 +236,9 @@ int Menu::haveItem(string name) {
 
 int Menu::findTool(string cat) {
     for (int i = 0; i < this->size; i++) {
-        bool airPass = (cat == "NONTOOL" ?  this->slot[i]->getId() != "0" : true);
+        // Bool buat bikin pas ngecek gk ngebawa air
+        // Karena air itu "NONTOOL"
+        bool airPass = (cat == "NONTOOL" ? this->slot[i]->getId() != "0" : true);
         if (this->slot[i]->getCategory() == cat && airPass) {
             return i;
         }
@@ -315,6 +329,8 @@ int Crafting::armorCount() {
         for (int i = idx+1; i < this->size; i++) {
             if (this->slot[i]->getName() == name) res++;
         }
+        // MAKASIH LHO, OTAK KEPEPET EMANG
+        return res;
     }
     return 0;
 }
@@ -368,12 +384,14 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListI
                 cat = this->slot[i]->getCategory();
             }
         }
+        Item* tempItem;
         if (cat == "TOOL") {
             if (dura > 10) dura = 10;
+            tempItem = new Tool(id, name, "-", cat, dura);
         } else {
             if (dura > 20) dura = 20;
+            tempItem = new Armor(id, name, "-", cat, dura);
         }
-        Item* tempItem = new Tool(id, name, "-", cat, dura);
         invent->addItem(tempItem);
         this->erase();
         return;
@@ -383,7 +401,10 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListI
         Recipe* curRecipe = listRecipe->getRecipe(i);
 
         if (checkRecipe(curRecipe, true, listItem) || checkRecipe(curRecipe, false, listItem)) {
+            // Buat ngambil loop berapa kali (Crafting multiple)
             int loop = (full ? this->getMinItem() : 1);
+
+            // Ngambil data
             string id = curRecipe->getOutput()->getId();
             string name = curRecipe->getOutput()->getName();
             string type = curRecipe->getOutput()->getType();
@@ -410,10 +431,10 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListI
 Recipe* Crafting::getCurCraft(bool mirror) {
     // i j min i j max
     int* limit = new int[4];
-    limit[0] = 10;
-    limit[1] = 10;
-    limit[2] = -1;
-    limit[3] = -1;
+    limit[0] = 10; // i min
+    limit[1] = 10; // j min
+    limit[2] = -1; // i max
+    limit[3] = -1; // j max
 
     int temp;
     for (int i = 0; i < 9; i++) {
@@ -433,6 +454,7 @@ Recipe* Crafting::getCurCraft(bool mirror) {
 
     int idx = 0;
     for (int i = 0; i < 3; i++) {
+        // Mirror secara horizotal
         if (mirror) {
             for (int j = 2; j >= 0; j--) {
                 if (i >= limit[0] && i <= limit[2] && j >= limit[1] && j <= limit[3]) {
@@ -458,6 +480,7 @@ Recipe* Crafting::getCurCraft(bool mirror) {
 }
 
 bool Crafting::checkRecipe(Recipe* recipe, bool mirror, ListItem* listItem) {
+    // Ngambil list item yang lagi ada di crafting table
     Recipe* curMat = this->getCurCraft(mirror);
     string temp1, temp2;
 
@@ -468,8 +491,8 @@ bool Crafting::checkRecipe(Recipe* recipe, bool mirror, ListItem* listItem) {
 
             if (temp1 != temp2) {
                 int idx = listItem->findItem(curMat->getItems(i), "nama");
-                if (idx != -1) {
-                    temp2 = listItem->getType(idx);
+                if (idx != -1) { // Item secara nama gk ketemu
+                    temp2 = listItem->getType(idx); // Cari by type
                     if (temp1 != temp2) {
                         return false;
                     }
