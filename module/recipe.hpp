@@ -25,7 +25,6 @@ class Recipe {
         int getCol();
         int getN();
         string getItems(int idx);
-        string getType(int idx);
         void printItems();
 
         void setRowCol(int row, int col);

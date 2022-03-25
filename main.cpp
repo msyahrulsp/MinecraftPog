@@ -123,14 +123,21 @@ int main() {
         tTool = listItem.getCat(itemIdx);
 
         if (tTool == "TOOL") {
-          tempItem = new Tool(tempId, tName, tType, tTool, 10);
+          for (int i = 0; i < itemQty; i++) {
+            tempItem = new Tool(tempId, tName, tType, tTool, 10);
+            invent.addItem(tempItem);
+          }
         } else {
-          tempItem = new NonTool(tempId, tName, tType, tTool, itemQty);
+          while (itemQty > 0) {
+            int qt = (itemQty >= 64 ? 64 : itemQty);
+            tempItem = new NonTool(tempId, tName, tType, tTool, qt);
+            invent.addItem(tempItem);
+            itemQty -= qt;
+          }
         }
-
-        invent.addItem(tempItem);
       } else {
         cout << "Item tidak terdaftar" << endl;
+        exit(1);
       }
     } else if (command == "MOVE") {
       string slotSrc;
@@ -143,8 +150,16 @@ int main() {
 
         char srcType = slotSrc[0];
         char destType = slotDest[0];
-        int srcDest = (int)slotSrc[1]-48;
-        int destDest = (int)slotDest[1]-48;
+        int srcDest = 0;
+        int destDest = 0;
+
+        for (int i = 1; i < slotSrc.size(); i++) {
+          srcDest = srcDest * 10 + (int)slotSrc[i]-48;
+        }
+
+        for (int i = 1; i< slotDest.size(); i++) {
+          destDest = destDest * 10 + (int)slotDest[i]-48;
+        }
 
         if (srcType == 'I') {
           if (destType == 'I') {
@@ -167,18 +182,25 @@ int main() {
         }
       }
     } else if (command == "SHOW") {
+      cout << "\t\t\t-- INVENTORY MENU --" << endl << endl;
       craft.display();
+      cout << endl;
       invent.display();
+      cout << endl;
     } else if (command == "DISCARD") {
       string slotSrc;
       int slotQty;
       
       cin >> slotSrc >> slotQty;
       char srcType = slotSrc[0];
-      int destType = (int)slotSrc[1]-48;
+      int destType = 0;
+
+      for (int i = 1; i < slotSrc.size(); i++) {
+        destType = destType * 10 + (int)slotSrc[i]-48;
+      }
 
       if (srcType == 'I') {
-        if (destType >= 0 && destType < 36) {
+        if (destType >= 0 && destType < 27) {
           invent.discard(destType, slotQty);
         } else {
           cout << "Index tujuan invalid" << endl;
@@ -197,7 +219,11 @@ int main() {
 
       cin >> slotSrc;
       char srcType = slotSrc[0];
-      int destType = (int)slotSrc[1]-48;
+      int destType = 0;
+
+      for (int i = 1; i < slotSrc.size(); i++) {
+        destType = destType * 10 + (int)slotSrc[i]-48;
+      }
 
       if (srcType == 'I') {
         if (destType >= 0 && destType < 36) {
@@ -214,12 +240,11 @@ int main() {
       } else {
         cout << "Tujuan invalid" << endl;
       }
+    } else if (command == "EXIT") {
+      break;
     } else {
       cout << "Invalid command" << endl;
     }
   }
   return 0;
 }
-
-// TO DO
-// MOVE WITH MANY DESTINATION

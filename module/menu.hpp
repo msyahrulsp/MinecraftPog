@@ -30,7 +30,7 @@ class Menu {
         int findTool(string cat);
 
         bool isEmpty(int idx);
-        bool haveItem(string name);
+        int haveItem(string name);
 
         void display();
 };
@@ -51,8 +51,8 @@ class Crafting : public Menu {
         void erase();
         int getMinItem();
         void craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListItem* listItem);
-        Recipe* getCurCraft();
-        bool checkRecipe(Recipe* recipe, bool byBlock, ListItem* listItem);
+        Recipe* getCurCraft(bool mirror);
+        bool checkRecipe(Recipe* recipe, bool mirror, ListItem* listItem);
 };
 
 #endif

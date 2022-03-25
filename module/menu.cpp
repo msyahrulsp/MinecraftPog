@@ -14,38 +14,44 @@ Menu::~Menu() {
 }
 
 void Menu::addItem(Item* item) {
-    for (int i = 0; i < this->size; i++) {
-        int dn = this->slot[i]->getSide();
-        int dn2 = item->getSide();
-        string name = this->slot[i]->getName();
-        if (this->slot[i]->getCategory() == "NONTOOL") {
-            // Ada item nontool yang bisa distack
-            if (haveItem(item->getName())) {
-                if (name == item->getName()) {
-                    if (dn + dn2 <= 64) {
-                        this->slot[i]->setSide(dn + dn2);
-                        return;
-                    } else {
-                        this->slot[i]->setSide(64);
-                        item->setSide(dn2 - (64 - dn));
-                        // rekursif dari awal loop
-                        this->addItem(item);
-                    } 
-                }
+    if (item->getCategory() == "NONTOOL") {
+        int idx = this->haveItem(item->getName());
+        if (idx != -1) {
+            if (this->slot[idx]->getSide() + item->getSide() <= 64) {
+                this->slot[idx]->setSide(this->slot[idx]->getSide() + item->getSide());
+                return;
             } else {
+                item->setSide(item->getSide() - (64 - this->slot[idx]->getSide()));
+                this->slot[idx]->setSide(64);
+                this->addItem(item);
+                return;
+            }
+        } else {
+            for (int i = 0; i < this->size; i++) {
                 if (isEmpty(i)) {
                     this->slot[i] = item;
                     return;
                 }
             }
-        } else {
-            if (isEmpty(i)) {
-                this->slot[i] = item;
-                return;
-            }
         }
-    }  
-    cout << "Inventory penuh!" << endl;
+    }
+
+    for (int i = 0; i < this->size; i++) {
+        if (isEmpty(i)) {
+            this->slot[i] = item;
+            return;
+        }
+    }
+
+    cout << "Slot penuh! ";
+
+    if (item->getCategory() == "NONTOOL" && item->getSide() > 0) {
+        cout << item->getSide() << " " << item->getName() << " jatuh ke tanah!" << endl;
+    }
+
+    if (item->getCategory() == "TOOL") {
+        cout << item->getName() << " jatuh ke tanah!" << endl;
+    }
 }
 
 void Menu::discard(int idx, int qty) {
@@ -82,39 +88,54 @@ void Menu::move(int src, int dest) {
     Item* itemSrc = this->getSlot(src);
     Item* itemDest = this->getSlot(dest);
 
-    if (itemSrc->getCategory() == "NONTOOL") {
-        if (itemSrc->getName() == itemDest->getName()) {
-            if (itemDest->getSide() <= 63) {
+    if (itemSrc->getId() == "0") {
+        cout << "Tidak ada item di slot " << src << endl;
+        return;
+    }
+
+    if (src < 0 || src >= this->size) {
+        cout << "Slot tidak ada" << endl;
+        return;
+    }
+
+    // Tool atau NonTool at least bakal ada 1
+    if (itemSrc->getSide() >= 1) {
+        if (itemSrc->getCategory() == "NONTOOL") {
+            if (itemSrc->getName() == itemDest->getName()) {
+                if (itemDest->getSide() <= 63) {
+                    itemSrc->setSide(itemSrc->getSide()-1);
+                    itemDest->setSide(itemDest->getSide()+1);
+
+                    if (itemSrc->getSide() == 0) {
+                        this->slot[src] = AIR;
+                    }
+                } else {
+                    cout << "Slot " << dest << " penuh" << endl;
+                }
+            } else if (itemDest->getId() == "0") {
+                string id = itemSrc->getId();
+                string name = itemSrc->getName();
+                string type = itemSrc->getType();
                 itemSrc->setSide(itemSrc->getSide()-1);
-                itemDest->setSide(itemDest->getSide()+1);
 
                 if (itemSrc->getSide() == 0) {
                     this->slot[src] = AIR;
                 }
+
+                this->slot[dest] = new NonTool(id, name, type, "NONTOOL", 1);
             } else {
-                cout << "Slot " << dest << " penuh" << endl;
+                cout << "Item di slot tujuan tidak sama" << endl;
             }
-        } else if (itemDest->getId() == "0") {
-            string id = itemSrc->getId();
-            string name = itemSrc->getName();
-            string type = itemSrc->getType();
-            itemSrc->setSide(itemSrc->getSide()-1);
-
-            if (itemSrc->getSide() == 0) {
-                this->slot[src] = AIR;
-            }
-
-            this->slot[dest] = new NonTool(id, name, type, "NONTOOL", 1);
         } else {
-            cout << "Item tidak sama" << endl;
+            if (itemDest->getId() == "0") {
+                this->slot[dest] = itemSrc;
+                this->slot[src] = AIR;
+            } else {
+                cout << "Slot " << dest << " terisi" << endl;
+            }
         }
     } else {
-        if (itemDest->getId() == "0") {
-            this->slot[dest] = itemSrc;
-            this->slot[src] = AIR;
-        } else {
-            cout << "Slot " << dest << " terisi" << endl;
-        }
+        cout << "Item pada inventory kurang" << endl;
     }
 }
 
@@ -122,41 +143,61 @@ void Menu::move(int src, int dest, Menu* destList) {
     Item* itemSrc = this->getSlot(src);
     Item* itemDest = destList->getSlot(dest);
 
-    if (itemSrc->getCategory() == "NONTOOL") {
-        if (itemSrc->getName() == itemDest->getName()) {
-            if (itemDest->getSide() <= 63) {
+    if (itemSrc->getId() == "0") {
+        cout << "Tidak ada item di slot " << src << endl;
+        return;
+    }
+
+    if (src < 0 || src >= this->size) {
+        cout << "Slot source hanya berukuran " << this->size << endl;
+        return;
+    }
+
+    if (dest < 0 || dest >= destList->size) {
+        cout << "Slot destination hanya berukuran " << destList->size << endl;
+        return;
+    }
+
+    // Tool atau NonTool at least bakal ada 1
+    if (itemSrc->getSide() >= 1) {
+        if (itemSrc->getCategory() == "NONTOOL") {
+            if (itemSrc->getName() == itemDest->getName()) {
+                if (itemDest->getSide() <= 63) {
+                    itemSrc->setSide(itemSrc->getSide()-1);
+                    itemDest->setSide(itemDest->getSide()+1);
+
+                    if (itemSrc->getSide() == 0) {
+                        this->slot[src] = AIR;
+                    }
+                } else {
+                    cout << "Slot " << dest << (destList->size == 9 ? "Crafting" : "Inventory");
+                    cout << " penuh" << endl;
+                }
+            } else if (itemDest->getId() == "0") {
+                string id = itemSrc->getId();
+                string name = itemSrc->getName();
+                string type = itemSrc->getType();
                 itemSrc->setSide(itemSrc->getSide()-1);
-                itemDest->setSide(itemDest->getSide()+1);
 
                 if (itemSrc->getSide() == 0) {
                     this->slot[src] = AIR;
                 }
+
+                destList->slot[dest] = new NonTool(id, name, type, "NONTOOL", 1);
             } else {
-                cout << "Slot " << dest << (destList->size == 9 ? "Crafting" : "Inventory");
-                cout << " penuh" << endl;
+                cout << "Item di slot tujuan tidak sama" << endl;
             }
-        } else if (itemDest->getId() == "0") {
-            string id = itemSrc->getId();
-            string name = itemSrc->getName();
-            string type = itemSrc->getType();
-            itemSrc->setSide(itemSrc->getSide()-1);
-
-            if (itemSrc->getSide() == 0) {
-                this->slot[src] = AIR;
-            }
-
-            destList->slot[dest] = new NonTool(id, name, type, "NONTOOL", 1);
         } else {
-            cout << "Item tidak sama" << endl;
+            if (itemDest->getId() == "0") {
+                destList->slot[dest] = itemSrc;
+                this->slot[src] = AIR;
+            } else {
+                cout << "Slot " << dest << (destList->size == 9 ? " Crafting" : " Inventory");
+                cout << " terisi" << endl;
+            }
         }
     } else {
-        if (itemDest->getId() == "0") {
-            destList->slot[dest] = itemSrc;
-            this->slot[src] = AIR;
-        } else {
-            cout << "Slot " << dest << (destList->size == 9 ? "Crafting" : "Inventory");
-            cout << " terisi" << endl;
-        }
+        cout << "Item kurang untuk dipindahkan" << endl;
     }
 }
 
@@ -168,13 +209,13 @@ bool Menu::isEmpty(int idx) {
     return this->slot[idx]->getId() == "0";
 }
 
-bool Menu::haveItem(string name) {
+int Menu::haveItem(string name) {
     for (int i = 0; i < this->size; i++) {
         int dn = this->slot[i]->getSide();
         string tName = this->slot[i]->getName();
-        if (tName == name && dn < 64) return true;
+        if (tName == name && dn < 64) return i;
     }
-    return false;
+    return -1;
 }
 
 int Menu::findTool(string cat) {
@@ -301,7 +342,7 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListI
     }
 }
 
-Recipe* Crafting::getCurCraft() {
+Recipe* Crafting::getCurCraft(bool mirror) {
     // i j min i j max
     int* limit = new int[4];
     limit[0] = 10;
@@ -327,11 +368,21 @@ Recipe* Crafting::getCurCraft() {
 
     int idx = 0;
     for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (i >= limit[0] && i <= limit[2] && j >= limit[1] && j <= limit[3]) {
-                string name = this->slot[i * 3 + j]->getName();
-                res->setMaterial(idx, name);
-                idx++;
+        if (mirror) {
+            for (int j = 2; j >= 0; j--) {
+                if (i >= limit[0] && i <= limit[2] && j >= limit[1] && j <= limit[3]) {
+                    string name = this->slot[i * 3 + j]->getName();
+                    res->setMaterial(idx, name);
+                    idx++;
+                }
+            }
+        } else {
+            for (int j = 0; j < 3; j++) {
+                if (i >= limit[0] && i <= limit[2] && j >= limit[1] && j <= limit[3]) {
+                    string name = this->slot[i * 3 + j]->getName();
+                    res->setMaterial(idx, name);
+                    idx++;
+                }
             }
         }
     }
@@ -341,36 +392,26 @@ Recipe* Crafting::getCurCraft() {
     return res;
 }
 
-bool Crafting::checkRecipe(Recipe* recipe, bool byBlock, ListItem* listItem) {
-    Recipe* curMat = this->getCurCraft();
+bool Crafting::checkRecipe(Recipe* recipe, bool mirror, ListItem* listItem) {
+    Recipe* curMat = this->getCurCraft(mirror);
     string temp1, temp2;
 
     if (recipe->getRow() == curMat->getRow() && recipe->getCol() == curMat->getCol()) {
         for (int i = 0; i < curMat->getN(); i++) {
-            if (byBlock) {
-                temp1 = recipe->getItems(i);
-                temp2 = curMat->getItems(i);
-            } else {
-                int idx = listItem->findItem(recipe->getItems(i), "type");
-                if (idx != -1) {
-                    temp1 = listItem->getType(idx);
-                } else {
-                    return false;
-                }
-                temp1 = listItem->getType(idx);
-                if (idx != -1) {
-                    temp1 = listItem->getType(idx);
-                } else {
-                    return false;
-                }
-                idx = listItem->findItem(curMat->getItems(i), "type");
+            temp1 = recipe->getItems(i);
+            temp2 = curMat->getItems(i);
+
+            if (temp1 != temp2) {
+                int idx = listItem->findItem(curMat->getItems(i), "nama");
                 if (idx != -1) {
                     temp2 = listItem->getType(idx);
+                    if (temp1 != temp2) {
+                        return false;
+                    }
                 } else {
                     return false;
                 }
-            }
-            if (temp1 != temp2) return false;
+            };
         }
         return true;
     }
