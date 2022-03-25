@@ -40,6 +40,7 @@ int main() {
   ifstream itemConfigFile(itemConfigPath);
   for (string line; getline(itemConfigFile, line);) {
     readItem = split(line);
+    // Bikin pointer ke class baru, pertipe
     if (readItem[3] == "TOOL") {
       tempItem = new Tool(readItem[0], readItem[1], readItem[2], readItem[3], 0);
     } else if (readItem[3] == "ARMOR") {
@@ -47,10 +48,12 @@ int main() {
     } else {
       tempItem = new NonTool(readItem[0], readItem[1], readItem[2], readItem[3], 0);
     }
+
+    // Masukin item ke list item
     listItem << *tempItem;
   }
 
-  // read recipes
+  // Baca recipe semua item
   for (const auto &entry : filesystem::directory_iterator(configPath + "/recipe")) {
     ifstream recipeConfigFile(entry.path());
     string line;
@@ -60,10 +63,12 @@ int main() {
     tempRecipe = new Recipe((int)line[0]-48, (int)line[2]-48);
     string *tempMat = new string[tempRecipe->getN()];
 
+    // Ambil tiap char, dinamis ukurannya
     for (int i = 0; i < tempRecipe->getRow(); i++) {
       getline(recipeConfigFile, line);
       readItem = split(line);
       for (int j = 0; j < readItem.size(); j++) {
+        // Set recipe, perindex
         tempRecipe->setMaterial(idx, readItem[j]);
         idx++;
       }
@@ -72,6 +77,8 @@ int main() {
     getline(recipeConfigFile, line);
     readItem = split(line);
     int itemIdx = listItem.findItem(readItem[0], "nama");
+
+    // Bikin pointer ke class baru buat dimasukin ke list recipe
     if (itemIdx != -1) {
       tempId = listItem.getId(itemIdx);
       tType = listItem.getType(itemIdx);
@@ -88,7 +95,7 @@ int main() {
       tempRecipe->setOutput(tempItem);
     } else {
       cout << "Nama Item di File Input salah" << endl;
-      exit(0);
+      exit(1);
     }
     
     listRecipe.addRecipe(*tempRecipe);
@@ -108,6 +115,7 @@ int main() {
       string craftType;
       cin >> craftType;
 
+      // Craft per jenis, sekali atau semua
       if (craftType == "ONCE") {
         craft.craft(&listRecipe, &invent, false, &listItem);
       } else if (craftType == "ALL") {
@@ -120,8 +128,10 @@ int main() {
       int itemQty;
       cin >> itemName >> itemQty;
 
-      int itemIdx = listItem.findItem(itemName, "nama");
-      if (itemIdx != -1) {
+      int itemIdx = listItem.findItem(itemName, "nama"); // Nyari index item input di list
+      if (itemIdx != -1) { // Item gk ditemuin
+
+        // Bikin class baru buat masukin ke inventory
         tempId = listItem.getId(itemIdx);
         tName = listItem.getName(itemIdx);
         tType = listItem.getType(itemIdx);
@@ -137,7 +147,8 @@ int main() {
             invent.addItem(tempItem);
           }
         } else {
-          while (itemQty > 0) {
+          // Case give item > 64, biar gk kesimpen di 1 slot dan tetep jalan
+          while (itemQty > 0) { 
             int qt = (itemQty >= 64 ? 64 : itemQty);
             tempItem = new NonTool(tempId, tName, tType, tTool, qt);
             invent.addItem(tempItem);
@@ -162,6 +173,7 @@ int main() {
         int srcDest = 0;
         int destDest = 0;
 
+        // Change masukan tujuan biar bisa puluhan
         for (int i = 1; i < slotSrc.size(); i++) {
           srcDest = srcDest * 10 + (int)slotSrc[i]-48;
         }
@@ -208,6 +220,7 @@ int main() {
       char srcType = slotSrc[0];
       int destType = 0;
 
+      // Change masukan tujuan biar bisa puluhan
       for (int i = 1; i < slotSrc.size(); i++) {
         destType = destType * 10 + (int)slotSrc[i]-48;
       }
@@ -234,6 +247,7 @@ int main() {
       char srcType = slotSrc[0];
       int destType = 0;
 
+      // Change masukan tujuan biar bisa puluhan
       for (int i = 1; i < slotSrc.size(); i++) {
         destType = destType * 10 + (int)slotSrc[i]-48;
       }
@@ -260,6 +274,7 @@ int main() {
       char srcType = slotSrc[0];
       int destType = 0;
 
+      // Change masukan tujuan biar bisa puluhan
       for (int i = 1; i < slotSrc.size(); i++) {
         destType = destType * 10 + (int)slotSrc[i]-48;
       }
