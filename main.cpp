@@ -26,6 +26,7 @@ vector<string> split(string str, char delimiter = ' ') {
 int main() {
   vector<string> readItem;
   ListItem listItem = ListItem();
+  ArmorSlot armor = ArmorSlot();
   Inventory invent = Inventory();
   Crafting craft = Crafting();
   ListRecipe listRecipe = ListRecipe();
@@ -41,6 +42,8 @@ int main() {
     readItem = split(line);
     if (readItem[3] == "TOOL") {
       tempItem = new Tool(readItem[0], readItem[1], readItem[2], readItem[3], 0);
+    } else if (readItem[3] == "ARMOR") {
+      tempItem = new Armor(readItem[0], readItem[1], readItem[2], readItem[3], 0);
     } else {
       tempItem = new NonTool(readItem[0], readItem[1], readItem[2], readItem[3], 0);
     }
@@ -76,6 +79,8 @@ int main() {
 
       if (tTool == "TOOL") {
         tempItem = new Tool(tempId, readItem[0], tType, tTool, 10);
+      } else if (tTool == "ARMOR") {
+        tempItem = new Armor(tempId, readItem[0], tType, tTool, 20);
       } else {
         tempItem = new NonTool(tempId, readItem[0], tType, tTool, stoi(readItem[1]));
       }
@@ -122,9 +127,13 @@ int main() {
         tType = listItem.getType(itemIdx);
         tTool = listItem.getCat(itemIdx);
 
-        if (tTool == "TOOL") {
+        if ((tTool == "TOOL") || (tTool == "ARMOR")) {
           for (int i = 0; i < itemQty; i++) {
-            tempItem = new Tool(tempId, tName, tType, tTool, 10);
+            if (tTool == "TOOL") {
+              tempItem = new Tool(tempId, tName, tType, tTool, 10);
+            } else {
+              tempItem = new Armor(tempId, tName, tType, tTool, 20);
+            }
             invent.addItem(tempItem);
           }
         } else {
@@ -187,6 +196,10 @@ int main() {
       cout << endl;
       invent.display();
       cout << endl;
+
+      cout << "\t-- Armor Slot --" << endl;
+      armor.displayArmor();
+      cout << endl;
     } else if (command == "DISCARD") {
       string slotSrc;
       int slotQty;
@@ -237,6 +250,25 @@ int main() {
         } else {
           cout << "Index tujuan invalid" << endl;
         }
+      } else {
+        cout << "Tujuan invalid" << endl;
+      }
+    } else if (command == "EQUIP") {
+      string slotSrc;
+
+      cin >> slotSrc;
+      char srcType = slotSrc[0];
+      int destType = 0;
+
+      for (int i = 1; i < slotSrc.size(); i++) {
+        destType = destType * 10 + (int)slotSrc[i]-48;
+      }
+
+      if (srcType == 'I') {
+        tempItem = invent.getSlot(destType);
+        armor.equip(tempItem, &invent, destType);
+      } else if (srcType == 'C') {
+        cout << "Armor hanya bisa diequip dari Inventory" << endl;
       } else {
         cout << "Tujuan invalid" << endl;
       }

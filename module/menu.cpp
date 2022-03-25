@@ -13,6 +13,10 @@ Menu::~Menu() {
     delete[] this->slot;
 }
 
+void Menu::setSlot(Item* item, int idx) {
+    this->slot[idx] = item;
+}
+
 void Menu::addItem(Item* item) {
     if (item->getCategory() == "NONTOOL") {
         int idx = this->haveItem(item->getName());
@@ -49,7 +53,7 @@ void Menu::addItem(Item* item) {
         cout << item->getSide() << " " << item->getName() << " jatuh ke tanah!" << endl;
     }
 
-    if (item->getCategory() == "TOOL") {
+    if (item->getCategory() == "TOOL" || item->getCategory() == "ARMOR") {
         cout << item->getName() << " jatuh ke tanah!" << endl;
     }
 }
@@ -75,12 +79,12 @@ void Menu::discard(int idx, int qty) {
 }
 
 void Menu::use(int idx) {
-    if (this->slot[idx]->getCategory() == "TOOL") {
+    if (this->slot[idx]->getCategory() == "TOOL" || this->slot[idx]->getCategory() == "ARMOR") {
         int n = this->slot[idx]->getSide();
         this->slot[idx]->setSide(n-1);
         if (n - 1 == 0) this->slot[idx] = AIR;
     } else {
-        cout << "Command hanya untuk Tool" << endl;
+        cout << "Command hanya untuk Tool dan Armor" << endl;
     }
 }
 
@@ -244,6 +248,48 @@ Inventory::Inventory() : Menu(SIZEI) {
     
 }
 
+ArmorSlot::ArmorSlot() : Menu(SIZEA) {
+    
+}
+
+void ArmorSlot::displayArmor() {
+    cout << "Helmet => " << this->slot[0]->getId() << ":" << this->slot[0]->getSide() << endl;
+    cout << "Chestplate => " << this->slot[1]->getId() << ":" << this->slot[1]->getSide() << endl;
+    cout << "Leggings => " << this->slot[2]->getId() << ":" << this->slot[2]->getSide() << endl;
+    cout << "Boots => " << this->slot[3]->getId() << ":" << this->slot[3]->getSide() << endl;
+}
+
+void ArmorSlot::equip(Item* armor, Inventory* invent, int idx) {
+    string type = armor->getType();
+    int i = 0;
+
+    if (invent->getSlot(idx)->getId() == "0") {
+        cout << "Tidak ada item pada slot tersebut" << endl;
+        return;
+    }
+
+    if (type == "HELMET") {
+        i = 0;
+    } else if (type == "CHESTPLATE") {
+        i = 1;
+    } else if (type == "LEGGINGS") {
+        i = 2;
+    } else if (type == "BOOTS") {
+        i = 3;
+    } else {
+        cout << invent->getSlot(idx)->getName() << " tidak bisa diequip" << endl;
+        return;
+    }
+
+    if (!isEmpty(i)) {
+        cout << "Slot " << type << " telah terisi" << endl;
+        return;
+    }
+
+    this->slot[i] = armor;
+    invent->setSlot(AIR, idx);
+}
+
 Crafting::Crafting() : Menu(SIZEC) {
     
 }
@@ -261,6 +307,18 @@ int Crafting::toolCount() {
     return 0;
 }
 
+int Crafting::armorCount() {
+    int idx = this->findTool("ARMOR");
+    if (idx != -1) {
+        int res = 1;
+        string name = this->slot[idx]->getName();
+        for (int i = idx+1; i < this->size; i++) {
+            if (this->slot[i]->getName() == name) res++;
+        }
+    }
+    return 0;
+}
+
 int Crafting::nonToolCount() {
     int count = 0;
     for (int i = 0; i < this->size; i++) {
@@ -271,9 +329,10 @@ int Crafting::nonToolCount() {
 
 bool Crafting::validCombine() {
     int tc = this->toolCount();
+    int ac = this->armorCount();
     int ntc = this->nonToolCount();
 
-    return (tc == 2 && ntc == 0);
+    return ((tc == 2 && ntc == 0) || (ntc == 0 && ac == 2));
 }
 
 void Crafting::erase() {
@@ -299,17 +358,22 @@ int Crafting::getMinItem() {
 
 void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListItem* listItem) {
     if (this->validCombine()) {
-        string id, name;
+        string id, name, cat;
         int dura = 0;
         for (int i = 0; i < this->size; i++) {
             if (this->slot[i]->getId() != "0") {
                 id = this->slot[i]->getId();
                 name = this->slot[i]->getName();
                 dura += this->slot[i]->getSide();
+                cat = this->slot[i]->getCategory();
             }
         }
-        if (dura > 10) dura = 10;
-        Item* tempItem = new Tool(id, name, "-", "TOOL", dura);
+        if (cat == "TOOL") {
+            if (dura > 10) dura = 10;
+        } else {
+            if (dura > 20) dura = 20;
+        }
+        Item* tempItem = new Tool(id, name, "-", cat, dura);
         invent->addItem(tempItem);
         this->erase();
         return;
@@ -330,6 +394,8 @@ void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListI
             for (int i = 0; i < loop; i++) {
                 if (cat == "TOOL") {
                     tempItem = new Tool(id, name, type, cat, 10);
+                } else if (cat == "ARMOR") {
+                    tempItem = new Armor(id, name, type, cat, 20);
                 } else {
                     tempItem = new NonTool(id, name, type, cat, qty);
                 }

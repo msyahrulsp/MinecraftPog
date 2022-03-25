@@ -25,6 +25,22 @@ Tool& Tool::operator=(const Tool& other) {
     return *this;
 }
 
+Armor::Armor() : Item("", "", "", "ARMOR") {
+    this->durability = 0;
+}
+
+Armor::Armor(string id, string name, string type, string category, int durability) : Item(id, name, type, "ARMOR") {
+    this->durability = durability;
+}
+
+int Armor::getSide() {
+    return this->durability;
+}
+
+void Armor::setSide(int durability) {
+    this->durability = durability;
+}
+
 NonTool::NonTool() : Item("", "", "", "NONTOOL") {
     this->quantity = 0;
 }

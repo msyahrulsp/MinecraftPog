@@ -35,7 +35,8 @@ Item* Recipe::getOutput() {
 
 void Recipe::printItems() {
     cout << "Output: " << this->output->getName() << ":";
-    cout << (this->output->getCategory() == "TOOL" ? 1 : this->output->getSide()) << endl;
+    cout << (this->output->getCategory() == "TOOL" || this->output->getCategory() == "ARMOR"
+    ? 1 : this->output->getSide()) << endl;
     for (int i = 0; i < this->getN(); i++) {
         cout << this->items[i];
         if ((i + 1) % this->col != 0) {

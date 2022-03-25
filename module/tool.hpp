@@ -16,6 +16,17 @@ class Tool : public Item {
         void setSide(int durability) override;
 };
 
+class Armor : public Item {
+    private:
+        int durability;
+    public:
+        Armor();
+        Armor(string id, string name, string type, string category, int durability);
+        
+        int getSide() override;
+        void setSide(int durability) override;
+};
+
 class NonTool : public Item {
     private:
         int quantity;

@@ -7,6 +7,7 @@
 #include "recipe.hpp"
 
 #define SIZEI 27
+#define SIZEA 4
 #define SIZEC 9
 #define AIR new NonTool("0", "-", "-", "-", 0)
 
@@ -21,6 +22,7 @@ class Menu {
         ~Menu();
 
         void addItem(Item* item);
+        void setSlot(Item* item, int idx);
         void discard(int idx, int qty);
         void use(int idx);
         void move(int src, int dest);
@@ -40,11 +42,20 @@ class Inventory : public Menu {
         Inventory();
 };
 
+class ArmorSlot : public Menu {
+    public:
+        ArmorSlot();
+
+        void displayArmor();
+        void equip(Item* armor, Inventory* invent, int idx);
+};
+
 class Crafting : public Menu {
     public:
         Crafting();
 
         int toolCount();
+        int armorCount();
         int nonToolCount();
 
         bool validCombine();
