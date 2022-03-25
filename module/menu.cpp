@@ -299,7 +299,6 @@ int Crafting::getMinItem() {
 
 void Crafting::craft(ListRecipe* listRecipe, Inventory* invent, bool full, ListItem* listItem) {
     if (this->validCombine()) {
-        // TODO handle kalau gk valid
         string id, name;
         int dura = 0;
         for (int i = 0; i < this->size; i++) {
