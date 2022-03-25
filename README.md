@@ -1,34 +1,22 @@
-# Minecraft-Template
+## Tugas Besar OOP - Kelompok PixelHy
+Akibat pandemi COVID-19 yang berlangsung lama, Mobita tetap menjadi kurir, namun Mobita mulai lelah dan bosan. Apalagi, sebagai mahasiswa yang berkuliah di バンドン工科大学 (ITB) cabang Shinjuku, tugas besar Mobita sangaaaaaaaat banyak. Oleh karena itu, Doraemonangis berusaha untuk menghibur Mobita dengan membuat server Tambang-Kerajinan (sebuah game).
 
-This is a repository for Tubes 1 IF2210 2021/2022. 
+Mobita sangat menyukai permainan ini, sampai-sampai ia ingin Doraemonangis mengeluarkan gadget yang merupakan item di dalam permainan tersebut. Tetapi, rekening Doraemonangis mulai menipis, namun Doraemonangis tidak kehilangan akal. Dalam permainan Tambang-Kerajinan, terdapat suatu fitur untuk membuat kerajinan (crafting). Doraemonangis butuh bantuan kalian untuk membuat gadget yang dapat membuat gadget melalui crafting!
 
+
+## How to Run
+Make sure you are using Linux with C++17. WSL also works if you are using Windows.
+```
+sudo apt-get install make g++
+make all
+```
+Using the current main file, it should return that 8 out of 8 tests passed.
+
+## Anggota Kelompok
 | NIM      | NAMA                        |
 |----------|-----------------------------|
 | 13520002 | Muhammad Fikri Ranjabi      | 
 | 13520008 | Daniel Salim                | 
 | 13520032 | Fadil Fauzani               | 
 | 13520107 | Azka Syauqy Irsyad          | 
-| 13520161 | M Syahrul Surya Putra       | 
-
-## What's Inside
-This template consists of:
-- config folder containing all the config files (items and recipes)
-- tests folder containing two sample test files (input and answer)
-- main.cpp containing the sample main code
-- check.cpp containing the code for checking
-- makefile for compiling and testing
-
-## Running the Makefile
-Make sure you are using Linux with C++17. WSL also works if you are using Windows.
-```
-sudo apt-get install make g++
-make all
-```
-Using the sample main file, it should return that 1 out of 2 tests passed.
-
-## Adding More Tests
-You can add more tests by adding more files to the tests folder. Tests consists of two files, input with "in" extension and answer with "ans" extension. Each test should have exactly one EXPORT command which exports the current inventory into an "out" file in the tests folder. Please refer to the sample tests. Checking will be done by comparing the answer file and the output file.
-
-As the test is done by comparing the output files, you can freely use standard output in your program.
-
-Automated testing will not work if you are using GUI (obviously).
+| 13520161 | M Syahrul Surya Putra       |
